@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A Solution — Admin Dashboard</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f6fa;
+      color: #1a1a1a;
+    }
+
+    header {
+      background: linear-gradient(90deg, #ff6b6b, #c44569, #574b90);
+      color: white;
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .logout-btn {
+      background: white;
+      color: #c44569;
+    }
+
+    main {
+      padding: 30px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .welcome {
+      background: white;
+      padding: 25px;
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.08);
+      margin-bottom: 25px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.08);
+    }
+
+    .card h3 {
+      margin-top: 0;
+    }
+
+    .card p {
+      color: #666;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>A Solution Admin</h1>
+    <button class="logout-btn" id="logoutBtn">Logout</button>
+  </header>
+
+  <main>
+    <div class="welcome">
+      <h2>Welcome to the Admin Dashboard</h2>
+      <p id="userEmail">Loading user...</p>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <h3>Projects</h3>
+        <p>Manage website projects and content.</p>
+      </div>
+
+      <div class="card">
+        <h3>Clients</h3>
+        <p>Manage client information.</p>
+      </div>
+
+      <div class="card">
+        <h3>Messages</h3>
+        <p>View customer inquiries and messages.</p>
+      </div>
+
+      <div class="card">
+        <h3>Settings</h3>
+        <p>Manage admin and website settings.</p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    async function checkUser() {
+      const { data } = await supabase.auth.getSession();
+
+      if (!data.session) {
+        window.location.href = "index.html";
+        return;
+      }
+
+      document.getElementById("userEmail").textContent =
+        "Logged in as: " + data.session.user.email;
+    }
+
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+      await supabase.auth.signOut();
+      window.location.href = "index.html";
+    });
+
+    checkUser();
+  </script>
+
+</body>
+</html>
