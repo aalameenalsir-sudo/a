@@ -6,10 +6,14 @@ window.UI = (function(){
   }
 
   async function loadComponents(){
-    const sidebarHtml = await fetchText('/admin/components/sidebar.html');
-    const headerHtml = await fetchText('/admin/components/header.html');
+    const sidebarHtml = await fetchText('./components/sidebar.html');
+    const headerHtml = await fetchText('./components/header.html');
     document.getElementById('sidebar-placeholder').innerHTML = sidebarHtml;
     document.getElementById('header-placeholder').innerHTML = headerHtml;
+
+    // set year if placeholder present
+    const yearEl = document.getElementById('admin-year');
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
 
     // Hook logout
     const logoutBtn = document.querySelector('[data-admin-logout]');

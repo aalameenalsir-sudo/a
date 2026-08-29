@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>تسجيل الدخول — لوحة الإدارة</title>
-  <link rel="stylesheet" href="/styles.css">
-  <link rel="stylesheet" href="/admin/admin.css">
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="./admin.css">
 </head>
 <body class="min-h-screen bg-background text-foreground flex items-center justify-center p-6">
   <div class="max-w-md w-full bg-card p-6 rounded-xl shadow">
@@ -32,7 +32,7 @@
     </form>
   </div>
 
-  <script src="/admin/js/auth.js"></script>
+  <script src="./js/auth.js"></script>
   <script>
     document.getElementById('login-form').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -49,7 +49,7 @@
         errEl.classList.add('hidden');
         // redirect
         const params = new URLSearchParams(location.search);
-        const redirect = params.get('redirect') || '/admin/index.html';
+        const redirect = params.get('redirect') || './index.html';
         location.href = redirect;
       }
     });
