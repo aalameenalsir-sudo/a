@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>تسجيل الدخول — لوحة الإدارة</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body class="min-h-screen bg-background text-foreground flex items-center justify-center p-6">
+  <div class="max-w-md w-full bg-card p-6 rounded-xl shadow">
+    <h1 class="text-2xl font-semibold mb-4 text-center">تسجيل دخول المسؤول</h1>
+    <form id="login-form" class="space-y-4">
+      <div>
+        <label class="text-sm mb-1 block">البريد الإلكتروني أو اسم المستخدم</label>
+        <input id="username" type="text" class="w-full px-3 py-2 border rounded-md" placeholder="admin@example.com">
+      </div>
+      <div>
+        <label class="text-sm mb-1 block">كلمة المرور</label>
+        <input id="password" type="password" class="w-full px-3 py-2 border rounded-md" placeholder="••••••••">
+      </div>
+      <div class="flex items-center justify-between">
+        <label class="inline-flex items-center gap-2">
+          <input id="remember" type="checkbox" class=""> تذكرني
+        </label>
+        <a href="#" class="text-sm text-muted-foreground">نسيت كلمة المرور؟</a>
+      </div>
+      <div>
+        <button type="submit" class="w-full bg-primary text-primary-foreground py-2 rounded-md">تسجيل الدخول</button>
+      </div>
+      <p id="login-error" class="text-destructive text-sm mt-2 hidden"></p>
+    </form>
+  </div>
+
+  <script src="/admin/js/auth.js"></script>
+  <script>
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const remember = document.getElementById('remember').checked;
+
+      const result = await AdminAuth.login({ username, password, remember });
+      const errEl = document.getElementById('login-error');
+      if (!result.success) {
+        errEl.textContent = result.message;
+        errEl.classList.remove('hidden');
+      } else {
+        errEl.classList.add('hidden');
+        // redirect
+        const params = new URLSearchParams(location.search);
+        const redirect = params.get('redirect') || '/admin/index.html';
+        location.href = redirect;
+      }
+    });
+  </script>
+</body>
+</html>

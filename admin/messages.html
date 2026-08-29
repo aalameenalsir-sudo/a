@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>الرسائل — لوحة الإدارة</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body class="min-h-screen bg-background text-foreground">
+  <div id="admin-root" class="min-h-screen flex">
+    <div id="sidebar-placeholder"></div>
+    <div class="flex-1 p-4 lg:p-8">
+      <div id="header-placeholder"></div>
+      <main class="mt-6">
+        <h2 class="text-xl font-semibold mb-4">صندوق الرسائل</h2>
+        <div class="bg-card p-4 rounded-lg shadow">
+          <ul id="messages-list" class="space-y-3"></ul>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="/admin/js/mock-data.js"></script>
+  <script src="/admin/js/helpers.js"></script>
+  <script src="/admin/js/auth.js"></script>
+  <script src="/admin/js/ui.js"></script>
+  <script>
+    if (!AdminAuth.isAuthenticated()) location.href = '/admin/login.html?redirect=' + encodeURIComponent(location.pathname + location.search);
+
+    UI.loadComponents().then(()=>{
+      const list = document.getElementById('messages-list');
+      MockData.messages.forEach(m => {
+        const li = document.createElement('li');
+        li.className = 'p-3 border rounded';
+        li.innerHTML = `<div class="flex justify-between"><div><strong>${m.from}</strong><div class="text-sm text-muted-foreground">${m.subject}</div></div><div class="text-xs text-muted-foreground">${helpers.formatDate(m.date)}</div></div><p class="mt-2 text-sm">${m.preview}</p>`;
+        list.appendChild(li);
+      });
+    });
+  </script>
+</body>
+</html>

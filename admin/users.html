@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>المستخدمون — لوحة الإدارة</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body class="min-h-screen bg-background text-foreground">
+  <div id="admin-root" class="min-h-screen flex">
+    <div id="sidebar-placeholder"></div>
+    <div class="flex-1 p-4 lg:p-8">
+      <div id="header-placeholder"></div>
+      <main class="mt-6">
+        <h2 class="text-xl font-semibold mb-4">قائمة المستخدمين</h2>
+        <div class="bg-card p-4 rounded-lg shadow overflow-auto">
+          <table class="w-full text-sm">
+            <thead class="text-muted-foreground text-xs">
+              <tr>
+                <th class="p-2 text-left">المعرف</th>
+                <th class="p-2 text-left">الاسم</th>
+                <th class="p-2 text-left">البريد</th>
+                <th class="p-2 text-left">دور</th>
+                <th class="p-2 text-left">الحالة</th>
+                <th class="p-2 text-left">إجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="users-table-body"></tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="/admin/js/mock-data.js"></script>
+  <script src="/admin/js/helpers.js"></script>
+  <script src="/admin/js/auth.js"></script>
+  <script src="/admin/js/ui.js"></script>
+  <script>
+    if (!AdminAuth.isAuthenticated()) location.href = '/admin/login.html?redirect=' + encodeURIComponent(location.pathname + location.search);
+
+    UI.loadComponents().then(()=>{
+      const tbody = document.getElementById('users-table-body');
+      MockData.users.forEach(u => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="p-2">${u.id}</td>
+          <td class="p-2">${u.name}</td>
+          <td class="p-2">${u.email}</td>
+          <td class="p-2">${u.role}</td>
+          <td class="p-2">${u.active ? 'نشط' : 'موقوف'}</td>
+          <td class="p-2"><button class="px-3 py-1 rounded bg-primary text-primary-foreground">عرض</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>المنتجات — لوحة الإدارة</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body class="min-h-screen bg-background text-foreground">
+  <div id="admin-root" class="min-h-screen flex">
+    <div id="sidebar-placeholder"></div>
+    <div class="flex-1 p-4 lg:p-8">
+      <div id="header-placeholder"></div>
+      <main class="mt-6">
+        <h2 class="text-xl font-semibold mb-4">المنتجات</h2>
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div id="products-grid" class=""></div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="/admin/js/mock-data.js"></script>
+  <script src="/admin/js/helpers.js"></script>
+  <script src="/admin/js/auth.js"></script>
+  <script src="/admin/js/ui.js"></script>
+  <script>
+    if (!AdminAuth.isAuthenticated()) location.href = '/admin/login.html?redirect=' + encodeURIComponent(location.pathname + location.search);
+
+    UI.loadComponents().then(()=>{
+      const grid = document.getElementById('products-grid');
+      MockData.products.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'bg-card p-4 rounded-lg shadow';
+        card.innerHTML = `<h3 class="font-semibold">${p.name}</h3><p class="text-sm text-muted-foreground">${p.sku}</p><p class="mt-2 font-medium">${helpers.formatCurrency(p.price)}</p>`;
+        grid.appendChild(card);
+      });
+    });
+  </script>
+</body>
+</html>
