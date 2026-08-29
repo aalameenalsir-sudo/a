@@ -3,9 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>A Solution — Admin Login</title>
 
+  <!-- Supabase Library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Our Supabase Client -->
   <script src="supabase-client.js"></script>
 
   <style>
@@ -27,10 +31,10 @@
     .login-box {
       width: 100%;
       max-width: 420px;
-      background: white;
+      background: #ffffff;
       padding: 40px;
       border-radius: 24px;
-      box-shadow: 0 20px 60px rgba(0,0,0,.2);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
     }
 
     h1 {
@@ -38,8 +42,8 @@
       color: #1a1a1a;
     }
 
-    p {
-      color: #666;
+    .subtitle {
+      color: #666666;
       margin-bottom: 30px;
     }
 
@@ -54,9 +58,14 @@
       width: 100%;
       padding: 14px;
       margin-bottom: 20px;
-      border: 1px solid #ddd;
+      border: 1px solid #dddddd;
       border-radius: 12px;
       font-size: 16px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #c44569;
     }
 
     button {
@@ -71,10 +80,17 @@
       cursor: pointer;
     }
 
+    button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
     #message {
       margin-top: 20px;
-      color: #c44569;
       text-align: center;
+      font-size: 14px;
+      min-height: 20px;
+      color: #c44569;
     }
   </style>
 </head>
@@ -82,55 +98,117 @@
 <body>
 
   <div class="login-box">
+
     <h1>A Solution</h1>
-    <p>Admin Panel Login</p>
+
+    <p class="subtitle">
+      Admin Panel Login
+    </p>
 
     <form id="loginForm">
-      <label>Email</label>
+
+      <label for="email">Email</label>
+
       <input
         type="email"
         id="email"
         placeholder="Enter your email"
+        autocomplete="email"
         required
       >
 
-      <label>Password</label>
+      <label for="password">Password</label>
+
       <input
         type="password"
         id="password"
         placeholder="Enter your password"
+        autocomplete="current-password"
         required
       >
 
-      <button type="submit">Login</button>
+      <button type="submit" id="loginButton">
+        Login
+      </button>
 
       <div id="message"></div>
+
     </form>
+
   </div>
 
   <script>
     const form = document.getElementById("loginForm");
     const message = document.getElementById("message");
+    const loginButton = document.getElementById("loginButton");
 
     form.addEventListener("submit", async function(event) {
+
       event.preventDefault();
 
-      message.textContent = "Checking...";
-
-      const email = document.getElementById("email").value;
+      const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
 
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
+      message.style.color = "#c44569";
+      message.textContent = "Checking...";
 
-      if (error) {
-        message.textContent = error.message;
-        return;
+      loginButton.disabled = true;
+      loginButton.textContent = "Signing in...";
+
+      try {
+
+        if (typeof supabase === "undefined") {
+          throw new Error("Supabase client is not loaded.");
+        }
+
+        const { data, error } =
+          await supabase.auth.signInWithPassword({
+            email: email,
+            password: password
+          });
+
+        if (error) {
+
+          message.style.color = "#c44569";
+          message.textContent =
+            "Login error: " + error.message;
+
+          loginButton.disabled = false;
+          loginButton.textContent = "Login";
+
+          return;
+        }
+
+        if (!data || !data.session) {
+
+          message.style.color = "#c44569";
+          message.textContent =
+            "Login failed: No session was created.";
+
+          loginButton.disabled = false;
+          loginButton.textContent = "Login";
+
+          return;
+        }
+
+        message.style.color = "green";
+        message.textContent =
+          "Login successful. Redirecting...";
+
+        window.location.href = "dashboard.html";
+
+      } catch (err) {
+
+        console.error("Login error:", err);
+
+        message.style.color = "#c44569";
+        message.textContent =
+          "Connection error: " + err.message;
+
+        loginButton.disabled = false;
+        loginButton.textContent = "Login";
       }
 
-      window.location.href = "dashboard.html";
     });
   </script>
 
