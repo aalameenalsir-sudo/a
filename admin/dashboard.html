@@ -61,6 +61,15 @@
       margin-bottom: 25px;
     }
 
+    .welcome h2 {
+      margin-top: 0;
+    }
+
+    #userEmail {
+      color: #666;
+      margin-bottom: 0;
+    }
+
     .cards {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -72,6 +81,11 @@
       padding: 25px;
       border-radius: 18px;
       box-shadow: 0 10px 30px rgba(0,0,0,.08);
+      transition: transform .2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
     }
 
     .card h3 {
@@ -80,6 +94,14 @@
 
     .card p {
       color: #666;
+      line-height: 1.5;
+    }
+
+    .status {
+      margin-top: 25px;
+      font-size: 14px;
+      color: #888;
+      text-align: center;
     }
   </style>
 </head>
@@ -88,16 +110,25 @@
 
   <header>
     <h1>A Solution Admin</h1>
-    <button class="logout-btn" id="logoutBtn">Logout</button>
+
+    <button
+      class="logout-btn"
+      id="logoutBtn"
+      type="button"
+    >
+      Logout
+    </button>
   </header>
 
   <main>
+
     <div class="welcome">
       <h2>Welcome to the Admin Dashboard</h2>
-      <p id="userEmail">Loading user...</p>
+      <p id="userEmail">Checking your account...</p>
     </div>
 
     <div class="cards">
+
       <div class="card">
         <h3>Projects</h3>
         <p>Manage website projects and content.</p>
@@ -117,25 +148,73 @@
         <h3>Settings</h3>
         <p>Manage admin and website settings.</p>
       </div>
+
     </div>
+
+    <div class="status" id="status"></div>
+
   </main>
 
   <script>
+    const userEmail = document.getElementById("userEmail");
+    const status = document.getElementById("status");
+    const logoutBtn = document.getElementById("logoutBtn");
+
     async function checkUser() {
-      const { data } = await supabase.auth.getSession();
+      try {
 
-      if (!data.session) {
-        window.location.href = "index.html";
-        return;
+        const {
+          data: { session },
+          error
+        } = await supabaseClient.auth.getSession();
+
+        if (error) {
+          throw error;
+        }
+
+        if (!session) {
+          window.location.href = "index.html";
+          return;
+        }
+
+        userEmail.textContent =
+          "Logged in as: " + session.user.email;
+
+        status.textContent = "Connected to Supabase";
+
+      } catch (error) {
+
+        console.error("Session error:", error);
+
+        userEmail.textContent =
+          "Unable to verify account.";
+
+        status.textContent =
+          "Connection error: " + error.message;
       }
-
-      document.getElementById("userEmail").textContent =
-        "Logged in as: " + data.session.user.email;
     }
 
-    document.getElementById("logoutBtn").addEventListener("click", async () => {
-      await supabase.auth.signOut();
-      window.location.href = "index.html";
+    logoutBtn.addEventListener("click", async function() {
+
+      logoutBtn.disabled = true;
+      logoutBtn.textContent = "Logging out...";
+
+      try {
+
+        await supabaseClient.auth.signOut();
+
+        window.location.href = "index.html";
+
+      } catch (error) {
+
+        console.error("Logout error:", error);
+
+        status.textContent =
+          "Logout error: " + error.message;
+
+        logoutBtn.disabled = false;
+        logoutBtn.textContent = "Logout";
+      }
     });
 
     checkUser();
