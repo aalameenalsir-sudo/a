@@ -103,6 +103,10 @@
       color: #888;
       text-align: center;
     }
+
+    .error {
+      color: #c0392b;
+    }
   </style>
 </head>
 
@@ -110,12 +114,7 @@
 
   <header>
     <h1>A Solution Admin</h1>
-
-    <button
-      class="logout-btn"
-      id="logoutBtn"
-      type="button"
-    >
+    <button class="logout-btn" id="logoutBtn" type="button">
       Logout
     </button>
   </header>
@@ -127,7 +126,7 @@
       <p id="userEmail">Checking your account...</p>
     </div>
 
-    <div class="cards">
+    <div class="cards" id="adminContent" style="display:none;">
 
       <div class="card">
         <h3>Projects</h3>
@@ -159,17 +158,17 @@
     const userEmail = document.getElementById("userEmail");
     const status = document.getElementById("status");
     const logoutBtn = document.getElementById("logoutBtn");
+    const adminContent = document.getElementById("adminContent");
 
-    async function checkUser() {
+    async function checkAdminAccess() {
       try {
-
         const {
           data: { session },
-          error
+          error: sessionError
         } = await supabaseClient.auth.getSession();
 
-        if (error) {
-          throw error;
+        if (sessionError) {
+          throw sessionError;
         }
 
         if (!session) {
@@ -177,47 +176,64 @@
           return;
         }
 
-        userEmail.textContent =
-          "Logged in as: " + session.user.email;
+        const user = session.user;
 
-        status.textContent = "Connected to Supabase";
+        userEmail.textContent = "Logged in as: " + user.email;
+        status.textContent = "Checking admin permissions...";
+
+        const {
+          data: profile,
+          error: profileError
+        } = await supabaseClient
+          .from("profiles")
+          .select("role")
+          .eq("id", user.id)
+          .single();
+
+        if (profileError) {
+          throw profileError;
+        }
+
+        if (!profile || profile.role !== "admin") {
+          await supabaseClient.auth.signOut();
+
+          alert("Access denied. Admin account required.");
+
+          window.location.href = "index.html";
+          return;
+        }
+
+        status.textContent = "Admin access confirmed";
+        adminContent.style.display = "grid";
 
       } catch (error) {
+        console.error("Admin check error:", error);
 
-        console.error("Session error:", error);
-
-        userEmail.textContent =
-          "Unable to verify account.";
-
-        status.textContent =
-          "Connection error: " + error.message;
+        userEmail.textContent = "Unable to verify admin access.";
+        status.textContent = "Error: " + error.message;
+        status.classList.add("error");
       }
     }
 
     logoutBtn.addEventListener("click", async function() {
-
       logoutBtn.disabled = true;
       logoutBtn.textContent = "Logging out...";
 
       try {
-
         await supabaseClient.auth.signOut();
-
         window.location.href = "index.html";
-
       } catch (error) {
-
         console.error("Logout error:", error);
 
-        status.textContent =
-          "Logout error: " + error.message;
+        status.textContent = "Logout error: " + error.message;
+        status.classList.add("error");
 
         logoutBtn.disabled = false;
         logoutBtn.textContent = "Logout";
       }
     });
 
-    checkUser();
+    checkAdminAccess();
   </script>
 
 </body>
