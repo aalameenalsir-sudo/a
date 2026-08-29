@@ -6,10 +6,7 @@
 
   <title>A Solution — Admin Login</title>
 
-  <!-- Supabase Library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <!-- Our Supabase Client -->
   <script src="supabase-client.js"></script>
 
   <style>
@@ -31,10 +28,10 @@
     .login-box {
       width: 100%;
       max-width: 420px;
-      background: #ffffff;
+      background: white;
       padding: 40px;
       border-radius: 24px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 20px 60px rgba(0,0,0,.2);
     }
 
     h1 {
@@ -43,7 +40,7 @@
     }
 
     .subtitle {
-      color: #666666;
+      color: #666;
       margin-bottom: 30px;
     }
 
@@ -58,13 +55,13 @@
       width: 100%;
       padding: 14px;
       margin-bottom: 20px;
-      border: 1px solid #dddddd;
+      border: 1px solid #ddd;
       border-radius: 12px;
       font-size: 16px;
-      outline: none;
     }
 
     input:focus {
+      outline: none;
       border-color: #c44569;
     }
 
@@ -81,7 +78,7 @@
     }
 
     button:disabled {
-      opacity: 0.7;
+      opacity: .7;
       cursor: not-allowed;
     }
 
@@ -100,15 +97,11 @@
   <div class="login-box">
 
     <h1>A Solution</h1>
-
-    <p class="subtitle">
-      Admin Panel Login
-    </p>
+    <p class="subtitle">Admin Panel Login</p>
 
     <form id="loginForm">
 
       <label for="email">Email</label>
-
       <input
         type="email"
         id="email"
@@ -118,7 +111,6 @@
       >
 
       <label for="password">Password</label>
-
       <input
         type="password"
         id="password"
@@ -157,51 +149,37 @@
 
       try {
 
-        if (typeof supabase === "undefined") {
-          throw new Error("Supabase client is not loaded.");
-        }
-
         const { data, error } =
-          await supabase.auth.signInWithPassword({
+          await supabaseClient.auth.signInWithPassword({
             email: email,
             password: password
           });
 
         if (error) {
-
-          message.style.color = "#c44569";
-          message.textContent =
-            "Login error: " + error.message;
+          message.textContent = "Login error: " + error.message;
 
           loginButton.disabled = false;
           loginButton.textContent = "Login";
-
           return;
         }
 
-        if (!data || !data.session) {
-
-          message.style.color = "#c44569";
-          message.textContent =
-            "Login failed: No session was created.";
+        if (!data.session) {
+          message.textContent = "Login failed: No session created.";
 
           loginButton.disabled = false;
           loginButton.textContent = "Login";
-
           return;
         }
 
         message.style.color = "green";
-        message.textContent =
-          "Login successful. Redirecting...";
+        message.textContent = "Login successful...";
 
         window.location.href = "dashboard.html";
 
       } catch (err) {
 
-        console.error("Login error:", err);
+        console.error(err);
 
-        message.style.color = "#c44569";
         message.textContent =
           "Connection error: " + err.message;
 
