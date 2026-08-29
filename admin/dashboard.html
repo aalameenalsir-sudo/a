@@ -77,15 +77,19 @@
     }
 
     .card {
+      display: block;
       background: white;
       padding: 25px;
       border-radius: 18px;
       box-shadow: 0 10px 30px rgba(0,0,0,.08);
-      transition: transform .2s ease;
+      transition: transform .2s ease, box-shadow .2s ease;
+      text-decoration: none;
+      color: inherit;
     }
 
     .card:hover {
-      transform: translateY(-3px);
+      transform: translateY(-4px);
+      box-shadow: 0 14px 35px rgba(0,0,0,.12);
     }
 
     .card h3 {
@@ -95,6 +99,7 @@
     .card p {
       color: #666;
       line-height: 1.5;
+      margin-bottom: 0;
     }
 
     .status {
@@ -114,7 +119,12 @@
 
   <header>
     <h1>A Solution Admin</h1>
-    <button class="logout-btn" id="logoutBtn" type="button">
+
+    <button
+      class="logout-btn"
+      id="logoutBtn"
+      type="button"
+    >
       Logout
     </button>
   </header>
@@ -126,12 +136,16 @@
       <p id="userEmail">Checking your account...</p>
     </div>
 
-    <div class="cards" id="adminContent" style="display:none;">
+    <div
+      class="cards"
+      id="adminContent"
+      style="display:none;"
+    >
 
-      <div class="card">
+      <a class="card" href="projects.html">
         <h3>Projects</h3>
-        <p>Manage website projects and content.</p>
-      </div>
+        <p>Add, edit, publish, hide and delete website projects.</p>
+      </a>
 
       <div class="card">
         <h3>Clients</h3>
@@ -178,8 +192,11 @@
 
         const user = session.user;
 
-        userEmail.textContent = "Logged in as: " + user.email;
-        status.textContent = "Checking admin permissions...";
+        userEmail.textContent =
+          "Logged in as: " + user.email;
+
+        status.textContent =
+          "Checking admin permissions...";
 
         const {
           data: profile,
@@ -209,8 +226,12 @@
       } catch (error) {
         console.error("Admin check error:", error);
 
-        userEmail.textContent = "Unable to verify admin access.";
-        status.textContent = "Error: " + error.message;
+        userEmail.textContent =
+          "Unable to verify admin access.";
+
+        status.textContent =
+          "Error: " + error.message;
+
         status.classList.add("error");
       }
     }
@@ -222,10 +243,13 @@
       try {
         await supabaseClient.auth.signOut();
         window.location.href = "index.html";
+
       } catch (error) {
         console.error("Logout error:", error);
 
-        status.textContent = "Logout error: " + error.message;
+        status.textContent =
+          "Logout error: " + error.message;
+
         status.classList.add("error");
 
         logoutBtn.disabled = false;
