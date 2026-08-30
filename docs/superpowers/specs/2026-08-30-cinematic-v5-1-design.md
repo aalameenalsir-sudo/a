@@ -1,0 +1,2 @@
+# A Solution Cinematic V5.1 Design
+Light editorial identity led by the original A Solution logo and a persistent animated A motif. The website must sell capability through cinematic interaction while keeping all core services explicit. Desktop uses pointer-reactive identity, sticky service storytelling, kinetic type, stacked work scenes and a branded contact finale. Mobile keeps the same narrative with simplified motion. Supabase continues to supply public settings/projects and receive contact messages.

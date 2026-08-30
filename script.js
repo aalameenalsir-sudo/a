@@ -26,12 +26,18 @@ function frame(){
 } requestAnimationFrame(frame);
 
 const panels=$$('.service-panel');
+const serviceMedia=$$('[data-service-media]');
+const mediaCaption=$('.media-caption');
+function syncServiceMedia(no, panel){
+  serviceMedia.forEach(media=>media.classList.toggle('active',media.dataset.serviceMedia===no));
+  if(mediaCaption&&panel){mediaCaption.innerHTML=`<b>VISUAL / ${no}</b><span>${panel.querySelector('small')?.textContent||panel.dataset.label}</span>`;}
+}
 const serviceWords=['CREATE','BUILD','CONNECT','ORGANIZE','EXPERIENCE','ADVISE','AMPLIFY'];
 const io=new IntersectionObserver(entries=>entries.forEach(e=>{
   if(!e.isIntersecting)return;
   panels.forEach(p=>p.classList.remove('active'));
   const p=e.target;p.classList.add('active');const idx=panels.indexOf(p);const tone=p.dataset.tone;
-  document.documentElement.style.setProperty('--tone',tone);if(current)current.textContent=p.dataset.no;if(label)label.textContent=p.dataset.label;if(sceneWord)sceneWord.textContent=serviceWords[idx]||'A SOLUTION';if(rail)rail.style.transform=`translateY(${idx*100}%)`;
+  document.documentElement.style.setProperty('--tone','var(--brand)');syncServiceMedia(p.dataset.no,p);if(current)current.textContent=p.dataset.no;if(label)label.textContent=p.dataset.label;if(sceneWord)sceneWord.textContent=serviceWords[idx]||'A SOLUTION';if(rail)rail.style.transform=`translateY(${idx*100}%)`;
   if(sceneA&&!reduced&&!window.gsap)sceneA.animate([{transform:`scale(.78) rotate(${idx%2?-7:7}deg)`,opacity:.25},{transform:`scale(1) rotate(${idx%2?3:-3}deg)`,opacity:1}],{duration:650,easing:'cubic-bezier(.16,1,.3,1)'})
 }),{rootMargin:'-42% 0px -42% 0px',threshold:.05});panels.forEach(p=>io.observe(p));
 
@@ -61,7 +67,7 @@ function initCinematicMotion(){
   $$('.manifest-lines p').forEach((el,i)=>gsap.fromTo(el,{xPercent:i%2?-10:10,opacity:.2},{xPercent:0,opacity:1,ease:'none',scrollTrigger:{trigger:el,start:'top 92%',end:'center 45%',scrub:1}}));
 
   const serviceTimeline=gsap.timeline({scrollTrigger:{trigger:'.service-scene',start:'top top',end:'bottom bottom',scrub:1}});
-  serviceTimeline.to('.scene-ring',{rotation:540,ease:'none'},0).to('.scene-a',{rotation:22,scale:1.12,ease:'none'},0).to('.scene-word',{yPercent:-110,rotation:-82,ease:'none'},0).to('.beam-a',{xPercent:420,rotation:42,ease:'none'},0).to('.beam-b',{xPercent:-380,rotation:-38,ease:'none'},0);
+  serviceTimeline.to('.scene-ring',{rotation:540,ease:'none'},0).to('.scene-a',{rotation:22,scale:1.12,ease:'none'},0).to('.scene-a-mask',{rotation:-8,scale:1.04,ease:'none'},0).to('.service-media-stage',{scale:1.08,rotation:2,ease:'none'},0).to('.scene-word',{yPercent:-110,rotation:-82,ease:'none'},0).to('.beam-a',{xPercent:420,rotation:42,ease:'none'},0).to('.beam-b',{xPercent:-380,rotation:-38,ease:'none'},0);
 
   panels.forEach((panel,i)=>{
     gsap.fromTo(panel,{opacity:.16,y:55,filter:'blur(8px)'},{opacity:1,y:0,filter:'blur(0px)',scrollTrigger:{trigger:panel,start:'top 72%',end:'center 52%',scrub:.8}});
