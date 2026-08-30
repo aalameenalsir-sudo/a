@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>A Solution Admin Dashboard</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -136,75 +135,41 @@
 
 <header>
   <h1>A Solution Admin</h1>
-
-  <button
-    class="logout-btn"
-    id="logoutButton"
-    type="button"
-  >
+  <button class="logout-btn" id="logoutButton" type="button">
     Logout
   </button>
 </header>
-
 
 <div class="container">
 
   <div class="welcome">
     <h2>Admin Dashboard</h2>
-
-    <p>
-      Manage your website, projects, clients and messages.
-    </p>
+    <p>Manage your website, projects, clients and messages.</p>
   </div>
-
 
   <div class="grid">
 
-    <!-- PROJECTS -->
-
     <a class="card" href="projects.html">
       <h3>Projects</h3>
-
-      <p>
-        Add, edit, publish, hide and delete website projects.
-      </p>
+      <p>Add, edit, publish, hide and delete website projects.</p>
     </a>
-
-
-    <!-- CLIENTS -->
 
     <a class="card" href="clients.html">
       <h3>Clients</h3>
-
-      <p>
-        Add clients, update their status, notes and follow-up dates.
-      </p>
+      <p>Add clients, update their status, notes and follow-up dates.</p>
     </a>
 
-
-    <!-- MESSAGES -->
-
-    <div class="card disabled">
+    <a class="card" href="messages.html">
       <h3>Messages</h3>
-
-      <p>
-        View and manage website enquiries. Coming next.
-      </p>
-    </div>
-
-
-    <!-- SETTINGS -->
+      <p>View website enquiries, update their status and manage messages.</p>
+    </a>
 
     <div class="card disabled">
       <h3>Settings</h3>
-
-      <p>
-        Manage website and admin settings. Coming soon.
-      </p>
+      <p>Manage website and admin settings. Coming soon.</p>
     </div>
 
   </div>
-
 
   <div class="status" id="adminStatus">
     Checking admin access...
@@ -212,37 +177,33 @@
 
 </div>
 
-
 <script>
+
   async function checkAdminAccess() {
 
     const status =
       document.getElementById("adminStatus");
 
-
     const {
       data: { session },
       error: sessionError
-    } = await supabaseClient.auth.getSession();
-
+    } =
+      await supabaseClient.auth.getSession();
 
     if (sessionError || !session) {
-
       window.location.href = "index.html";
-
       return;
     }
-
 
     const {
       data: profile,
       error: profileError
-    } = await supabaseClient
-      .from("profiles")
-      .select("role")
-      .eq("id", session.user.id)
-      .single();
-
+    } =
+      await supabaseClient
+        .from("profiles")
+        .select("role")
+        .eq("id", session.user.id)
+        .single();
 
     if (
       profileError ||
@@ -259,7 +220,6 @@
       return;
     }
 
-
     status.textContent =
       "Admin access confirmed ✓";
   }
@@ -275,13 +235,11 @@
 
   document
     .getElementById("logoutButton")
-    .addEventListener(
-      "click",
-      logout
-    );
+    .addEventListener("click", logout);
 
 
   checkAdminAccess();
+
 </script>
 
 </body>
