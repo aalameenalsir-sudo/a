@@ -1,0 +1,15 @@
+A Solution Unified Admin — build verification
+Generated: 2026-08-30
+
+Verified locally:
+- 26 admin files present
+- 9/9 static acceptance tests pass
+- Inline JavaScript syntax checked with node --check
+- Shared admin-common.js and supabase-client.js syntax checked
+- No service_role / SUPABASE_SERVICE / sk- patterns in admin files
+- Relationship forms use selectors instead of raw numeric foreign-key inputs
+- Quotation and invoice item editor pages included
+- Unified old admin pages included: clients, projects, messages, settings
+
+Supabase security advisor:
+- Only existing warning: Leaked Password Protection Disabled (Auth setting)

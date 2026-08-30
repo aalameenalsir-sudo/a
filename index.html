@@ -21,7 +21,7 @@
   </header>
 
   <main>
-    <section class="hero" data-cinematic-hero>
+    <section class="hero motion-hero" data-cinematic-hero>
       <div class="orb orb-one"></div><div class="orb orb-two"></div>
       <div class="hero-grid">
         <div class="hero-copy reveal">
@@ -37,14 +37,14 @@
       <div class="scroll-hint"><span>Scroll to explore</span><i></i></div>
     </section>
 
-    <section class="marquee" aria-hidden="true"><div class="marquee-track"><span>ADVERTISING</span><b>✦</b><span>MEDIA</span><b>✦</b><span>CREATIVE</span><b>✦</b><span>DIGITAL</span><b>✦</b><span>ADVERTISING</span><b>✦</b><span>MEDIA</span><b>✦</b><span>CREATIVE</span><b>✦</b><span>DIGITAL</span></div></section>
+    <section class="marquee kinetic-marquee" aria-hidden="true"><div class="marquee-track"><span>ADVERTISING</span><b>✦</b><span>MEDIA</span><b>✦</b><span>CREATIVE</span><b>✦</b><span>DIGITAL</span><b>✦</b><span>ADVERTISING</span><b>✦</b><span>MEDIA</span><b>✦</b><span>CREATIVE</span><b>✦</b><span>DIGITAL</span></div></section>
 
-    <section class="section services" id="services">
+    <section class="section services services-stage" id="services">
       <div class="section-head reveal"><p class="eyebrow">WHAT WE DO</p><h2>Media that moves<br><span>with people.</span></h2></div>
       <div class="service-list" id="serviceList"></div>
     </section>
 
-    <section class="section work" id="work">
+    <section class="section work work-showcase" id="work">
       <div class="section-head reveal"><p class="eyebrow">SELECTED WORK</p><h2>Built to be seen.<br><span>Designed to stay.</span></h2></div>
       <div class="project-stack" id="projectStack">
         <article class="project-card reveal" data-fallback><div class="project-image"><img src="a-solution-billboard-mockup.png" alt="Outdoor billboard advertising"></div><div class="project-meta"><span>01 / Outdoor</span><h3>City-scale presence</h3></div></article>
@@ -61,7 +61,7 @@
 
     <section class="brand-film reveal"><div class="film-image"><img src="a-solution-social-cover.png" alt="A Solution brand experience"></div><div class="film-overlay"><p>From the first glance</p><h2>to the lasting impression.</h2></div></section>
 
-    <section class="section contact" id="contact">
+    <section class="section contact contact-finale" id="contact">
       <div class="contact-card reveal"><p class="eyebrow">LET'S MAKE SOMETHING UNMISSABLE</p><h2>Have a project in mind?</h2><p>Tell us what you want people to see, feel and remember.</p><form id="contactForm" class="contact-form"><div class="form-row"><input name="name" placeholder="Your name" required><input name="company" placeholder="Company"></div><div class="form-row"><input name="email" type="email" placeholder="Email"><input name="phone" placeholder="Phone"></div><input name="subject" placeholder="Project / campaign"><textarea name="message" placeholder="Tell us about the project" required></textarea><button class="btn-primary magnetic" type="submit">Send inquiry <span>↗</span></button><div id="formStatus" class="form-status"></div></form></div>
       <div class="contact-details reveal"><img src="a-solution-logo.png" alt="A Solution"><div><a id="siteEmailLink" href="#"><span>Email</span><b id="siteEmailText">—</b></a><a id="siteWhatsappLink" href="#" target="_blank" rel="noreferrer"><span>WhatsApp</span><b id="sitePhoneText">—</b></a><div><span>Based in</span><b id="siteLocationText">Riyadh, KSA</b></div></div><div class="socials"><a id="instagramLink" href="#" target="_blank">Instagram</a><a id="xLink" href="#" target="_blank">X</a><a id="linkedinLink" href="#" target="_blank">LinkedIn</a><a id="tiktokLink" href="#" target="_blank">TikTok</a><a id="snapchatLink" href="#" target="_blank">Snapchat</a></div></div>
     </section>
@@ -73,6 +73,18 @@
   <script>
     const websiteSupabase = window.supabase.createClient('https://bgxtcpcbkjftkgswpizr.supabase.co','sb_publishable_t9MKvlsLheyCj-o-jIQ04A_9sGI_j_r');
     window.websiteSupabase = websiteSupabase;
+    async function loadWebsiteProjects(){
+      const {data}=await websiteSupabase.from('projects').select('*').eq('is_published',true).order('created_at',{ascending:false});
+      window.ASolutionSite?.renderProjects(data||[]);
+    }
+    async function loadWebsiteSettings(){
+      const [{data:ws},{data:settings}] = await Promise.all([
+        websiteSupabase.from('website_settings').select('*').eq('id',1).maybeSingle(),
+        websiteSupabase.from('settings').select('*').limit(1).maybeSingle()
+      ]);
+      window.ASolutionSite?.applyWebsiteSettings(ws||{});
+      window.ASolutionSite?.applyContactSettings(settings||{});
+    }
     async function bootstrapWebsite(){
       const [{data:ws},{data:settings},{data:projects}] = await Promise.all([
         websiteSupabase.from('website_settings').select('*').eq('id',1).maybeSingle(),
