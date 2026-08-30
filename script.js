@@ -93,16 +93,47 @@ function initProjectMotion(){
   })
 }
 
+
 const cfg=window.ASOLUTION_SUPABASE;const db=cfg&&window.supabase?window.supabase.createClient(cfg.url,cfg.key):null;
-async function loadSettings(){if(!db)return;try{const{data,error}=await db.from('settings').select('*').limit(1).maybeSingle();if(error||!data)return;const phone=data.phone||data.contact_phone,location=data.location||data.address;const e=$('#contact-email');if(e){e.textContent=PUBLIC_EMAIL;e.href=`mailto:${PUBLIC_EMAIL}`}if(phone){const e=$('#contact-phone');e.textContent=phone;e.href=`tel:${phone.replace(/[^+\d]/g,'')}`}if(location)$('#contact-location').textContent=location;const links=[['Instagram',data.instagram],['X',data.x||data.twitter],['LinkedIn',data.linkedin],['TikTok',data.tiktok],['Snapchat',data.snapchat]];const box=$('#socials');links.filter(x=>x[1]).forEach(([n,u])=>{const a=document.createElement('a');a.href=u;a.target='_blank';a.rel='noopener';a.textContent=n;box.appendChild(a)})}catch(e){console.warn('Settings unavailable',e)}}
-async function loadProjects(){if(!db)return;try{const{data,error}=await db.from('projects').select('*').eq('published',true).order('created_at',{ascending:false}).limit(5);if(error||!data?.length)return;const list=$('#project-list');list.innerHTML='';data.forEach((p,i)=>{const a=document.createElement('article');a.className='case-card';a.style.top=`${7+i*3}vh`;const title=p.title||p.name||`Project ${i+1}`,cat=p.category||p.service||'A Solution',desc=p.description||p.summary||'A Solution project.';a.innerHTML=`<div class="case-no">${String(i+1).padStart(2,'0')}</div><div class="case-copy"><small></small><h3></h3><p></p></div><div class="case-mark">${String(title).charAt(0).toUpperCase()}</div>`;a.querySelector('small').textContent=cat;a.querySelector('h3').textContent=title;a.querySelector('p').textContent=desc;list.appendChild(a)});requestAnimationFrame(()=>{initProjectMotion();window.ScrollTrigger?.refresh()})}catch(e){console.warn('Projects unavailable',e)}}
+
+function setText(sel,value,root=document){const el=$(sel,root);if(el&&value!==undefined&&value!==null)el.textContent=value}
+function setSplit(sel,title,accent,root=document){const el=$(sel,root);if(!el)return;el.textContent='';el.append(document.createTextNode(title||''),document.createElement('br'));const em=document.createElement('em');em.textContent=accent||'';el.append(em)}
+function ensureMeta(attr,name,value){if(!value)return;let el=document.head.querySelector(`meta[${attr}="${name}"]`);if(!el){el=document.createElement('meta');el.setAttribute(attr,name);document.head.appendChild(el)}el.setAttribute('content',value)}
+function applyHomeCms(cms){
+ if(!cms) return;
+ const lang=document.documentElement.lang==='ar'?'ar':'en',d=cms[lang];if(!d)return;
+ setText('.hero .eyebrow',d.hero?.eyebrow);const heroLines=$$('.hero-line i');if(heroLines[0]&&d.hero?.line1)heroLines[0].textContent=d.hero.line1;if(heroLines[1]&&d.hero?.line2)heroLines[1].textContent=d.hero.line2;if(heroLines[2]&&d.hero?.line3)heroLines[2].textContent=d.hero.line3;
+ setText('.hero-bottom>p',d.hero?.description);if(d.hero?.cta){const cta=$('.round-link');if(cta){const b=$('b',cta);cta.childNodes.forEach(n=>{if(n.nodeType===3)n.remove()});cta.insertBefore(document.createTextNode(d.hero.cta+' '),b)}}
+ setText('.manifest-label',d.manifest?.label);const ml=$$('.manifest-lines p');[d.manifest?.line1,d.manifest?.line2,d.manifest?.line3].forEach((v,i)=>{if(ml[i]&&v)ml[i].textContent=v});setText('.manifest-note p',d.manifest?.note);
+ setText('.cap-intro>span',d.capabilities?.kicker);setSplit('.cap-intro h2',d.capabilities?.title,d.capabilities?.accent);setText('.cap-intro>p',d.capabilities?.description);
+ setText('.process-head>span',d.process?.kicker);setSplit('.process-head h2',d.process?.title,d.process?.accent);$$('.process-track article').forEach((a,i)=>{const x=d.process?.items?.[i];if(!x)return;setText('h3',x.title,a);setText('p',x.text,a)});
+ setText('.work-head>span',d.work?.kicker);setSplit('.work-head h2',d.work?.title,d.work?.accent);setText('.work-head>p',d.work?.description);
+ setText('.contact-top>span',d.contact?.kicker);setText('.contact-top>p',d.contact?.prompt);setSplit('.contact-title h2',d.contact?.title,d.contact?.accent);setText('.contact-orbit',d.contact?.orbit);setText('.contact-info>p',d.contact?.description);
+ const vis=d.visibility||{};const visibilityMap={manifest:'.brand-manifest',services:'.capabilities',process:'.process',work:'.work',contact:'.contact'};Object.entries(visibilityMap).forEach(([k,s])=>{const el=$(s);if(el)el.hidden=vis[k]===false});
+}
+function applyServicesCms(cms){
+ if(!cms?.items?.length) return;
+ const lang=document.documentElement.lang==='ar'?'ar':'en';
+ cms.items.forEach((s,i)=>{const panel=$(`.service-panel[data-no="${s.no}"]`),media=$(`[data-service-media="${s.no}"]`);if(!panel)return;const d=s[lang]||s.en||{};panel.hidden=s.active===false;panel.dataset.label=d.label||panel.dataset.label;setText('small',d.category,panel);setSplit('h3',d.title,d.accent,panel);setText('p',d.description,panel);const ul=$('ul',panel);if(ul&&Array.isArray(d.items)){ul.textContent='';d.items.forEach(x=>{const li=document.createElement('li');li.textContent=x;ul.appendChild(li)})}if(media){media.hidden=s.active===false;if(s.image_url)media.style.setProperty('--media',`url("${String(s.image_url).replace(/"/g,'')}")`)}});
+ const visible=cms.items.filter(x=>x.active!==false);const total=$('.scene-count span');if(total)total.textContent=`/ ${String(visible.length).padStart(2,'0')}`;
+}
+function applySeoCms(cms){
+ if(!cms) return;const lang=document.documentElement.lang==='ar'?'ar':'en',d=cms[lang];if(!d)return;if(d.title)document.title=d.title;ensureMeta('name','description',d.description);ensureMeta('property','og:title',d.og_title||d.title);ensureMeta('property','og:description',d.og_description||d.description);
+}
+async function loadCmsContent(){
+ if(!db)return;try{const{data,error}=await db.from('site_content').select('content_key,value').in('content_key',['home','services','seo']);if(error)throw error;const cms=Object.fromEntries((data||[]).map(x=>[x.content_key,x.value]));if(!cms) return;applyHomeCms(cms.home);applyServicesCms(cms.services);applySeoCms(cms.seo);requestAnimationFrame(()=>window.ScrollTrigger?.refresh())}catch(e){console.warn('CMS content unavailable; using static fallback.',e)}
+}
+
+async function loadSettings(){if(!db)return;try{const{data,error}=await db.from('settings').select('*').limit(1).maybeSingle();if(error||!data)return;const email=data.email||data.contact_email||PUBLIC_EMAIL,phone=data.phone||data.contact_phone,location=data.location||data.address;const e=$('#contact-email');if(e){e.textContent=email;e.href=`mailto:${email}`}if(phone){const e=$('#contact-phone');e.textContent=phone;e.href=`tel:${phone.replace(/[^+\d]/g,'')}`}if(location)$('#contact-location').textContent=location;const links=[['Instagram',data.instagram],['X',data.x_url||data.x||data.twitter],['LinkedIn',data.linkedin],['TikTok',data.tiktok],['Snapchat',data.snapchat]];const box=$('#socials');links.filter(x=>x[1]).forEach(([n,u])=>{const a=document.createElement('a');a.href=u;a.target='_blank';a.rel='noopener';a.textContent=n;box.appendChild(a)})}catch(e){console.warn('Settings unavailable',e)}}
+async function loadProjects(){if(!db)return;try{const{data,error}=await db.from('projects').select('*').eq('is_published',true).order('sort_order',{ascending:true}).order('created_at',{ascending:false}).limit(5);if(error||!data?.length)return;const list=$('#project-list');list.innerHTML='';data.forEach((p,i)=>{const a=document.createElement('article');a.className='case-card';a.style.top=`${7+i*3}vh`;const isAr=document.documentElement.lang==='ar',title=(isAr&&p.title_ar)||p.title||p.name||`Project ${i+1}`,cat=(isAr&&p.category_ar)||p.category||p.service||'A Solution',desc=(isAr&&p.description_ar)||p.description||p.summary||'A Solution project.';a.innerHTML=`<div class="case-no">${String(i+1).padStart(2,'0')}</div><div class="case-copy"><small></small><h3></h3><p></p></div><div class="case-mark">${String(title).charAt(0).toUpperCase()}</div>`;a.querySelector('small').textContent=cat;a.querySelector('h3').textContent=title;a.querySelector('p').textContent=desc;list.appendChild(a)});requestAnimationFrame(()=>{initProjectMotion();window.ScrollTrigger?.refresh()})}catch(e){console.warn('Projects unavailable',e)}}
 const form=$('#contact-form');form.addEventListener('submit',async e=>{e.preventDefault();const status=$('#form-status'),btn=$('button',form);if(!db){status.textContent='Connection is temporarily unavailable.';return}const fd=new FormData(form),payload={name:String(fd.get('name')).trim(),email:String(fd.get('email')).trim(),phone:String(fd.get('phone')).trim(),message:String(fd.get('message')).trim(),status:'new'};btn.disabled=true;status.textContent='Sending…';try{const{error}=await db.from('messages').insert(payload);if(error)throw error;form.reset();status.textContent='Received. We’ll be in touch.'}catch(err){console.error(err);status.textContent='Could not send right now. Please email us directly.'}finally{btn.disabled=false}});
 
-loadSettings();loadProjects();
+loadCmsContent();loadSettings();loadProjects();
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initCinematicMotion);else initCinematicMotion();
 })();
 
 
+(()=>{const $$=(s,c=document)=>[...c.querySelectorAll(s)];
 function preloadServiceMedia(){
   const urls=$$('[data-service-media]').map(el=>{
     const raw=getComputedStyle(el).getPropertyValue('--media').trim();
@@ -135,4 +166,6 @@ function initActiveNavigation(){
 preloadServiceMedia();
 initActiveNavigation();
 const publicEmailNode=document.querySelector('#contact-email');
-if(publicEmailNode){publicEmailNode.textContent=PUBLIC_EMAIL;publicEmailNode.href=`mailto:${PUBLIC_EMAIL}`;}
+if(publicEmailNode&&!publicEmailNode.textContent.trim()){publicEmailNode.textContent=PUBLIC_EMAIL;publicEmailNode.href=`mailto:${PUBLIC_EMAIL}`;}
+
+})();
