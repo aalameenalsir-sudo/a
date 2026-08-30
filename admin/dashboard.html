@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>A Solution — Admin Dashboard</title>
+
+  <title>A Solution Admin Dashboard</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-client.js"></script>
@@ -16,249 +17,272 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f5f6fa;
-      color: #1a1a1a;
+      background: #f5f6f8;
+      color: #111827;
     }
 
     header {
-      background: linear-gradient(90deg, #ff6b6b, #c44569, #574b90);
+      background: #111827;
       color: white;
-      padding: 20px 30px;
+      padding: 18px 25px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 15px;
     }
 
     header h1 {
       margin: 0;
-      font-size: 24px;
-    }
-
-    button {
-      border: none;
-      border-radius: 10px;
-      padding: 10px 16px;
-      font-weight: bold;
-      cursor: pointer;
+      font-size: 22px;
     }
 
     .logout-btn {
-      background: white;
-      color: #c44569;
+      border: 0;
+      background: #dc2626;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
     }
 
-    main {
-      padding: 30px;
+    .container {
       max-width: 1200px;
-      margin: auto;
+      margin: 40px auto;
+      padding: 0 20px;
     }
 
     .welcome {
-      background: white;
-      padding: 25px;
-      border-radius: 18px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.08);
-      margin-bottom: 25px;
+      margin-bottom: 30px;
     }
 
     .welcome h2 {
+      margin-bottom: 8px;
+      font-size: 28px;
+    }
+
+    .welcome p {
+      color: #6b7280;
       margin-top: 0;
     }
 
-    #userEmail {
-      color: #666;
-      margin-bottom: 0;
-    }
-
-    .cards {
+    .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(2, 1fr);
       gap: 20px;
     }
 
     .card {
       display: block;
       background: white;
-      padding: 25px;
-      border-radius: 18px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.08);
-      transition: transform .2s ease, box-shadow .2s ease;
+      padding: 28px;
+      border-radius: 14px;
       text-decoration: none;
-      color: inherit;
+      color: #111827;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 4px 15px rgba(0,0,0,.05);
+      transition: .2s;
     }
 
     .card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 14px 35px rgba(0,0,0,.12);
+      box-shadow: 0 10px 25px rgba(0,0,0,.1);
     }
 
     .card h3 {
-      margin-top: 0;
+      margin: 0 0 10px;
+      font-size: 21px;
     }
 
     .card p {
-      color: #666;
-      line-height: 1.5;
-      margin-bottom: 0;
+      margin: 0;
+      color: #6b7280;
+      line-height: 1.6;
+    }
+
+    .disabled {
+      cursor: default;
+      opacity: .6;
+    }
+
+    .disabled:hover {
+      transform: none;
+      box-shadow: 0 4px 15px rgba(0,0,0,.05);
     }
 
     .status {
-      margin-top: 25px;
-      font-size: 14px;
-      color: #888;
-      text-align: center;
+      margin-top: 30px;
+      background: white;
+      padding: 18px;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      color: #6b7280;
     }
 
-    .error {
-      color: #c0392b;
+    @media (max-width: 700px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
     }
   </style>
 </head>
 
 <body>
 
-  <header>
-    <h1>A Solution Admin</h1>
+<header>
+  <h1>A Solution Admin</h1>
 
-    <button
-      class="logout-btn"
-      id="logoutBtn"
-      type="button"
-    >
-      Logout
-    </button>
-  </header>
+  <button
+    class="logout-btn"
+    id="logoutButton"
+    type="button"
+  >
+    Logout
+  </button>
+</header>
 
-  <main>
 
-    <div class="welcome">
-      <h2>Welcome to the Admin Dashboard</h2>
-      <p id="userEmail">Checking your account...</p>
+<div class="container">
+
+  <div class="welcome">
+    <h2>Admin Dashboard</h2>
+
+    <p>
+      Manage your website, projects, clients and messages.
+    </p>
+  </div>
+
+
+  <div class="grid">
+
+    <!-- PROJECTS -->
+
+    <a class="card" href="projects.html">
+      <h3>Projects</h3>
+
+      <p>
+        Add, edit, publish, hide and delete website projects.
+      </p>
+    </a>
+
+
+    <!-- CLIENTS -->
+
+    <a class="card" href="clients.html">
+      <h3>Clients</h3>
+
+      <p>
+        Add clients, update their status, notes and follow-up dates.
+      </p>
+    </a>
+
+
+    <!-- MESSAGES -->
+
+    <div class="card disabled">
+      <h3>Messages</h3>
+
+      <p>
+        View and manage website enquiries. Coming next.
+      </p>
     </div>
 
-    <div
-      class="cards"
-      id="adminContent"
-      style="display:none;"
-    >
 
-      <a class="card" href="projects.html">
-        <h3>Projects</h3>
-        <p>Add, edit, publish, hide and delete website projects.</p>
-      </a>
+    <!-- SETTINGS -->
 
-      <div class="card">
-        <h3>Clients</h3>
-        <p>Manage client information.</p>
-      </div>
+    <div class="card disabled">
+      <h3>Settings</h3>
 
-      <div class="card">
-        <h3>Messages</h3>
-        <p>View customer inquiries and messages.</p>
-      </div>
-
-      <div class="card">
-        <h3>Settings</h3>
-        <p>Manage admin and website settings.</p>
-      </div>
-
+      <p>
+        Manage website and admin settings. Coming soon.
+      </p>
     </div>
 
-    <div class="status" id="status"></div>
+  </div>
 
-  </main>
 
-  <script>
-    const userEmail = document.getElementById("userEmail");
-    const status = document.getElementById("status");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const adminContent = document.getElementById("adminContent");
+  <div class="status" id="adminStatus">
+    Checking admin access...
+  </div>
 
-    async function checkAdminAccess() {
-      try {
-        const {
-          data: { session },
-          error: sessionError
-        } = await supabaseClient.auth.getSession();
+</div>
 
-        if (sessionError) {
-          throw sessionError;
-        }
 
-        if (!session) {
-          window.location.href = "index.html";
-          return;
-        }
+<script>
+  async function checkAdminAccess() {
 
-        const user = session.user;
+    const status =
+      document.getElementById("adminStatus");
 
-        userEmail.textContent =
-          "Logged in as: " + user.email;
 
-        status.textContent =
-          "Checking admin permissions...";
+    const {
+      data: { session },
+      error: sessionError
+    } = await supabaseClient.auth.getSession();
 
-        const {
-          data: profile,
-          error: profileError
-        } = await supabaseClient
-          .from("profiles")
-          .select("role")
-          .eq("id", user.id)
-          .single();
 
-        if (profileError) {
-          throw profileError;
-        }
+    if (sessionError || !session) {
 
-        if (!profile || profile.role !== "admin") {
-          await supabaseClient.auth.signOut();
+      window.location.href = "index.html";
 
-          alert("Access denied. Admin account required.");
-
-          window.location.href = "index.html";
-          return;
-        }
-
-        status.textContent = "Admin access confirmed";
-        adminContent.style.display = "grid";
-
-      } catch (error) {
-        console.error("Admin check error:", error);
-
-        userEmail.textContent =
-          "Unable to verify admin access.";
-
-        status.textContent =
-          "Error: " + error.message;
-
-        status.classList.add("error");
-      }
+      return;
     }
 
-    logoutBtn.addEventListener("click", async function() {
-      logoutBtn.disabled = true;
-      logoutBtn.textContent = "Logging out...";
 
-      try {
-        await supabaseClient.auth.signOut();
-        window.location.href = "index.html";
+    const {
+      data: profile,
+      error: profileError
+    } = await supabaseClient
+      .from("profiles")
+      .select("role")
+      .eq("id", session.user.id)
+      .single();
 
-      } catch (error) {
-        console.error("Logout error:", error);
 
-        status.textContent =
-          "Logout error: " + error.message;
+    if (
+      profileError ||
+      !profile ||
+      profile.role !== "admin"
+    ) {
 
-        status.classList.add("error");
+      alert("You do not have admin permission.");
 
-        logoutBtn.disabled = false;
-        logoutBtn.textContent = "Logout";
-      }
-    });
+      await supabaseClient.auth.signOut();
 
-    checkAdminAccess();
-  </script>
+      window.location.href = "index.html";
+
+      return;
+    }
+
+
+    status.textContent =
+      "Admin access confirmed ✓";
+  }
+
+
+  async function logout() {
+
+    await supabaseClient.auth.signOut();
+
+    window.location.href = "index.html";
+  }
+
+
+  document
+    .getElementById("logoutButton")
+    .addEventListener(
+      "click",
+      logout
+    );
+
+
+  checkAdminAccess();
+</script>
 
 </body>
 </html>
