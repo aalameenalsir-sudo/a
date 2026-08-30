@@ -1,0 +1,3 @@
+-- Migration history sync placeholder.
+-- Production version: 20260830205539
+-- Hardening changes are already present in production.
