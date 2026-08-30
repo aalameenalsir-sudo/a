@@ -19,7 +19,7 @@ const Admin={
     <div class="nav-title">Work</div><a href="client-projects.html">Client Projects</a><a href="tasks.html">Tasks</a><a href="campaigns.html">Campaigns</a><a href="employees.html">Employees</a>
     <div class="nav-title">Sales</div><a href="quotations.html">Quotations</a><a href="contracts.html">Contracts</a>
     <div class="nav-title">Finance</div><a href="invoices.html">Invoices</a><a href="payments.html">Payments</a><a href="expenses.html">Expenses</a><a href="reports.html">Reports</a>
-    <div class="nav-title">Content</div><a href="projects.html">Public Projects</a><a href="messages.html">Messages</a>
+    <div class="nav-title">Content</div><a href="website-manager.html">Website Manager</a><a href="projects.html">Public Projects</a><a href="messages.html">Messages</a>
     <div class="nav-title">System</div><a href="documents.html">Documents</a><a href="notifications.html">Notifications</a><a href="activity.html">Activity Log</a><a href="settings.html">Settings</a></nav>`},
   setActiveNav(){const p=location.pathname.split('/').pop()||'dashboard.html';document.querySelectorAll('.nav a').forEach(a=>a.classList.toggle('active',a.getAttribute('href')===p));},
   shell(title,subtitle=''){const s=document.querySelector('.sidebar');if(s){s.innerHTML=this.nav();this.setActiveNav()}const t=document.querySelector('#pageTitle');if(t)t.textContent=title;const sub=document.querySelector('#pageSub');if(sub)sub.textContent=subtitle;},

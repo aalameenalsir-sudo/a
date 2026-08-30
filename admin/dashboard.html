@@ -1,9 +1,224 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dashboard — A Solution</title><link rel="stylesheet" href="admin-common.css"></head><body><div class="layout"><aside class="sidebar"></aside><main class="main"><div class="topbar"><div class="toolbar"><button class="btn mobile-menu" onclick="Admin.toggleMenu()">☰</button><div><h1 id="pageTitle"></h1><div id="pageSub" class="sub"></div></div></div><div class="actions"><button class="btn" onclick="Admin.logout()">Logout</button></div></div><div class="grid" id="metrics"></div><div class="split"><section class="section"><div class="section-head"><h2>Business pulse</h2><a class="link" href="reports.html">Full reports →</a></div><div id="pulse" class="list"></div></section><section class="section"><div class="section-head"><h2>Upcoming</h2><a class="link" href="tasks.html">Tasks →</a></div><div id="upcoming" class="list"></div></section></div><section class="section"><div class="section-head"><h2>Quick access</h2></div><div class="grid"><a class="card quick" href="opportunities.html"><b>Sales Pipeline</b><p class="sub">Move leads through the deal stages.</p></a><a class="card quick" href="quotations.html"><b>Quotations</b><p class="sub">Create itemized offers with VAT.</p></a><a class="card quick" href="invoices.html"><b>Invoices</b><p class="sub">Track billing, payments and balance.</p></a><a class="card quick" href="campaigns.html"><b>Campaigns</b><p class="sub">Budget, spend, leads and CPL.</p></a></div></section></main></div><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-client.js"></script><script src="admin-common.js"></script><script>
-async function load(){const today=new Date().toISOString().slice(0,10);const [clients,opps,tasks,projects,invoices,payments,expenses,notes,msgs]=await Promise.all([
- supabaseClient.from('clients').select('id',{count:'exact'}),supabaseClient.from('opportunities').select('id,stage,estimated_value'),supabaseClient.from('tasks').select('id,title,status,due_date').order('due_date',{ascending:true,nullsFirst:false}),supabaseClient.from('client_projects').select('id,status'),supabaseClient.from('invoices').select('id,total,paid_amount,status,due_date'),supabaseClient.from('payments').select('amount'),supabaseClient.from('expenses').select('amount'),supabaseClient.from('notifications').select('id,title,created_at,read_at').is('read_at',null),supabaseClient.from('messages').select('id,status')]);
- const inv=invoices.data||[], task=tasks.data||[], opp=opps.data||[];const outstanding=inv.reduce((s,x)=>s+Math.max(0,Admin.number(x.total)-Admin.number(x.paid_amount)),0);const overdue=task.filter(x=>x.due_date&&x.due_date<today&&!['completed','done'].includes(x.status)).length;const active=(projects.data||[]).filter(x=>['active','in_progress'].includes(x.status)).length;const unread=(notes.data||[]).length;const cards=[['Clients',clients.count||0,'CRM records'],['Pipeline',Admin.money(opp.filter(x=>!['won','lost'].includes(x.stage)).reduce((s,x)=>s+Admin.number(x.estimated_value),0)),'Open opportunity value'],['Outstanding',Admin.money(outstanding),'Invoice receivables'],['Overdue Tasks',overdue,'Needs attention'],['Active Projects',active,'Client delivery'],['Unread Notifications',unread,'System alerts'],['Payments',Admin.money((payments.data||[]).reduce((s,x)=>s+Admin.number(x.amount),0)),'Cash received'],['Expenses',Admin.money((expenses.data||[]).reduce((s,x)=>s+Admin.number(x.amount),0)),'Recorded costs']];metrics.innerHTML=cards.map(c=>`<div class="card metric"><div class="label">${c[0]}</div><div class="value">${c[1]}</div><div class="hint">${c[2]}</div></div>`).join('');
- pulse.innerHTML=[`<div class="list-item"><div class="row"><b>Won sales</b><b>${Admin.money(opp.filter(x=>x.stage==='won').reduce((s,x)=>s+Admin.number(x.estimated_value),0))}</b></div></div>`,`<div class="list-item"><div class="row"><b>New messages</b><b>${(msgs.data||[]).filter(x=>x.status==='new').length}</b></div></div>`,`<div class="list-item"><div class="row"><b>Open opportunities</b><b>${opp.filter(x=>!['won','lost'].includes(x.stage)).length}</b></div></div>`].join('');
- const due=task.filter(x=>x.due_date&&!['completed','done'].includes(x.status)).slice(0,5);upcoming.innerHTML=due.length?due.map(x=>`<div class="list-item"><b>${Admin.esc(x.title)}</b><div class="sub">${Admin.date(x.due_date)} · ${Admin.badge(x.status)}</div></div>`).join(''):'<div class="empty">No upcoming tasks.</div>';
-}
-(async()=>{Admin.shell('Dashboard','A Solution business control center');if(await Admin.requireAdmin())await load()})();
-</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A Solution — Admin Dashboard</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f6fa;
+      color: #1a1a1a;
+    }
+
+    header {
+      background: linear-gradient(90deg, #ff6b6b, #c44569, #574b90);
+      color: white;
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .logout-btn {
+      background: white;
+      color: #c44569;
+    }
+
+    main {
+      padding: 30px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .welcome {
+      background: white;
+      padding: 25px;
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.08);
+      margin-bottom: 25px;
+    }
+
+    .welcome h2 {
+      margin-top: 0;
+    }
+
+    #userEmail {
+      color: #666;
+      margin-bottom: 0;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.08);
+      transition: transform .2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+    }
+
+    .card h3 {
+      margin-top: 0;
+    }
+
+    .card p {
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .status {
+      margin-top: 25px;
+      font-size: 14px;
+      color: #888;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>A Solution Admin</h1>
+
+    <button
+      class="logout-btn"
+      id="logoutBtn"
+      type="button"
+    >
+      Logout
+    </button>
+  </header>
+
+  <main>
+
+    <div class="welcome">
+      <h2>Welcome to the Admin Dashboard</h2>
+      <p id="userEmail">Checking your account...</p>
+    </div>
+
+    <div class="cards">
+
+      <div class="card">
+        <h3>Projects</h3>
+        <p>Manage website projects and content.</p>
+      </div>
+
+      <div class="card">
+        <h3>Clients</h3>
+        <p>Manage client information.</p>
+      </div>
+
+      <div class="card">
+        <h3>Messages</h3>
+        <p>View customer inquiries and messages.</p>
+      </div>
+
+      <div class="card">
+        <h3>Settings</h3>
+        <p>Manage admin and website settings.</p>
+      </div>
+
+    </div>
+
+    <div class="status" id="status"></div>
+
+  </main>
+
+  <script>
+    const userEmail = document.getElementById("userEmail");
+    const status = document.getElementById("status");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    async function checkUser() {
+      try {
+
+        const {
+          data: { session },
+          error
+        } = await supabaseClient.auth.getSession();
+
+        if (error) {
+          throw error;
+        }
+
+        if (!session) {
+          window.location.href = "index.html";
+          return;
+        }
+
+        userEmail.textContent =
+          "Logged in as: " + session.user.email;
+
+        status.textContent = "Connected to Supabase";
+
+      } catch (error) {
+
+        console.error("Session error:", error);
+
+        userEmail.textContent =
+          "Unable to verify account.";
+
+        status.textContent =
+          "Connection error: " + error.message;
+      }
+    }
+
+    logoutBtn.addEventListener("click", async function() {
+
+      logoutBtn.disabled = true;
+      logoutBtn.textContent = "Logging out...";
+
+      try {
+
+        await supabaseClient.auth.signOut();
+
+        window.location.href = "index.html";
+
+      } catch (error) {
+
+        console.error("Logout error:", error);
+
+        status.textContent =
+          "Logout error: " + error.message;
+
+        logoutBtn.disabled = false;
+        logoutBtn.textContent = "Logout";
+      }
+    });
+
+    checkUser();
+  </script>
+
+</body>
+</html>
