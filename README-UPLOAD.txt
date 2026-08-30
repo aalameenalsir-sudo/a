@@ -1,18 +1,20 @@
-A Solution — Cinematic V5.2 Polish
+A SOLUTION — CINEMATIC V5.4 FINAL POLISH
 
-Replace these files in the existing GitHub Pages project:
-- index.html
-- styles.css
-- script.js
-- robots.txt
-- sitemap.xml
+Replace the existing site files with this package, while keeping your existing:
+- a-solution-logo.png
+- admin/ folder and any other admin assets not included here
 
-KEEP your existing a-solution-logo.png file in the project root.
+GitHub Desktop commit:
+Polish A Solution Cinematic V5.4
 
-Suggested GitHub Desktop commit summary:
-Polish A Solution Cinematic V5.2
+Then Commit to main -> Push origin.
 
-V5.3 — Brand Immersion
-- Service imagery is revealed inside the moving A.
-- Brand coral (#ff6b6b) now drives the interface accents.
-- Keeps V5.2 structure, Supabase integration, cinematic motion, and reduced-motion support.
+V5.4 includes:
+- Final cinematic interaction polish
+- Active navigation + glass header state
+- Service visual preloading
+- Touch-device cursor protection
+- Keyboard focus/accessibility polish
+- Reduced-motion preservation
+- Public contact email: aalameenalsir@gmail.com
+- Existing Supabase projects/messages/settings integration retained

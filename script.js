@@ -1,3 +1,4 @@
+const PUBLIC_EMAIL='aalameenalsir@gmail.com';
 (()=>{
 const $=(s,c=document)=>c.querySelector(s),$$=(s,c=document)=>[...c.querySelectorAll(s)];
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -93,10 +94,45 @@ function initProjectMotion(){
 }
 
 const cfg=window.ASOLUTION_SUPABASE;const db=cfg&&window.supabase?window.supabase.createClient(cfg.url,cfg.key):null;
-async function loadSettings(){if(!db)return;try{const{data,error}=await db.from('settings').select('*').limit(1).maybeSingle();if(error||!data)return;const email=data.email||data.contact_email,phone=data.phone||data.contact_phone,location=data.location||data.address;if(email){const e=$('#contact-email');e.textContent=email;e.href=`mailto:${email}`}if(phone){const e=$('#contact-phone');e.textContent=phone;e.href=`tel:${phone.replace(/[^+\d]/g,'')}`}if(location)$('#contact-location').textContent=location;const links=[['Instagram',data.instagram],['X',data.x||data.twitter],['LinkedIn',data.linkedin],['TikTok',data.tiktok],['Snapchat',data.snapchat]];const box=$('#socials');links.filter(x=>x[1]).forEach(([n,u])=>{const a=document.createElement('a');a.href=u;a.target='_blank';a.rel='noopener';a.textContent=n;box.appendChild(a)})}catch(e){console.warn('Settings unavailable',e)}}
+async function loadSettings(){if(!db)return;try{const{data,error}=await db.from('settings').select('*').limit(1).maybeSingle();if(error||!data)return;const phone=data.phone||data.contact_phone,location=data.location||data.address;const e=$('#contact-email');if(e){e.textContent=PUBLIC_EMAIL;e.href=`mailto:${PUBLIC_EMAIL}`}if(phone){const e=$('#contact-phone');e.textContent=phone;e.href=`tel:${phone.replace(/[^+\d]/g,'')}`}if(location)$('#contact-location').textContent=location;const links=[['Instagram',data.instagram],['X',data.x||data.twitter],['LinkedIn',data.linkedin],['TikTok',data.tiktok],['Snapchat',data.snapchat]];const box=$('#socials');links.filter(x=>x[1]).forEach(([n,u])=>{const a=document.createElement('a');a.href=u;a.target='_blank';a.rel='noopener';a.textContent=n;box.appendChild(a)})}catch(e){console.warn('Settings unavailable',e)}}
 async function loadProjects(){if(!db)return;try{const{data,error}=await db.from('projects').select('*').eq('published',true).order('created_at',{ascending:false}).limit(5);if(error||!data?.length)return;const list=$('#project-list');list.innerHTML='';data.forEach((p,i)=>{const a=document.createElement('article');a.className='case-card';a.style.top=`${7+i*3}vh`;const title=p.title||p.name||`Project ${i+1}`,cat=p.category||p.service||'A Solution',desc=p.description||p.summary||'A Solution project.';a.innerHTML=`<div class="case-no">${String(i+1).padStart(2,'0')}</div><div class="case-copy"><small></small><h3></h3><p></p></div><div class="case-mark">${String(title).charAt(0).toUpperCase()}</div>`;a.querySelector('small').textContent=cat;a.querySelector('h3').textContent=title;a.querySelector('p').textContent=desc;list.appendChild(a)});requestAnimationFrame(()=>{initProjectMotion();window.ScrollTrigger?.refresh()})}catch(e){console.warn('Projects unavailable',e)}}
 const form=$('#contact-form');form.addEventListener('submit',async e=>{e.preventDefault();const status=$('#form-status'),btn=$('button',form);if(!db){status.textContent='Connection is temporarily unavailable.';return}const fd=new FormData(form),payload={name:String(fd.get('name')).trim(),email:String(fd.get('email')).trim(),phone:String(fd.get('phone')).trim(),message:String(fd.get('message')).trim(),status:'new'};btn.disabled=true;status.textContent='Sending…';try{const{error}=await db.from('messages').insert(payload);if(error)throw error;form.reset();status.textContent='Received. We’ll be in touch.'}catch(err){console.error(err);status.textContent='Could not send right now. Please email us directly.'}finally{btn.disabled=false}});
 
 loadSettings();loadProjects();
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initCinematicMotion);else initCinematicMotion();
 })();
+
+
+function preloadServiceMedia(){
+  const urls=$$('[data-service-media]').map(el=>{
+    const raw=getComputedStyle(el).getPropertyValue('--media').trim();
+    return raw.replace(/^url\(["']?|["']?\)$/g,'');
+  }).filter(Boolean);
+  urls.forEach((url,i)=>{
+    const img=new Image();
+    if(i>1) img.loading='lazy';
+    img.decoding='async';
+    img.src=url;
+  });
+}
+
+function initActiveNavigation(){
+  const links=$$('.topbar nav a[href^="#"]');
+  const sections=links.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  if(!sections.length)return;
+  const update=()=>{
+    document.querySelector('.topbar')?.classList.toggle('is-scrolled',scrollY>24);
+    let current='';
+    sections.forEach(section=>{
+      if(section.getBoundingClientRect().top<=innerHeight*.42) current='#'+section.id;
+    });
+    links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')===current));
+  };
+  addEventListener('scroll',update,{passive:true});
+  update();
+}
+
+preloadServiceMedia();
+initActiveNavigation();
+const publicEmailNode=document.querySelector('#contact-email');
+if(publicEmailNode){publicEmailNode.textContent=PUBLIC_EMAIL;publicEmailNode.href=`mailto:${PUBLIC_EMAIL}`;}
