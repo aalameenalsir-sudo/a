@@ -1,13 +1,5 @@
-A SOLUTION — MOTION V5 / THE A
-
-Files to replace in your GitHub project:
-- index.html
-- styles.css
-- script.js
-
-KEEP your existing a-solution-logo.png file unchanged.
-
-Recommended GitHub Desktop commit message:
-Launch A Solution Motion V5 — The A
-
-Then click Push origin.
+A SOLUTION — CINEMATIC V5.1
+1) Keep your existing a-solution-logo.png in the repository root.
+2) Replace index.html, styles.css, script.js, robots.txt and sitemap.xml with these files.
+3) Commit: Launch A Solution Cinematic V5.1
+4) Push origin in GitHub Desktop.
