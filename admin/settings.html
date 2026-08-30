@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings | A Solution Admin</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f6f8;
+      color: #111827;
+    }
+
+    header {
+      background: #111827;
+      color: white;
+      padding: 18px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    header a {
+      color: white;
+      text-decoration: none;
+      background: #374151;
+      padding: 10px 16px;
+      border-radius: 8px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 35px auto;
+      padding: 0 20px;
+    }
+
+    .panel {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 28px;
+      box-shadow: 0 4px 15px rgba(0,0,0,.05);
+    }
+
+    .panel h2 {
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
+
+    .intro {
+      color: #6b7280;
+      margin-top: 0;
+      margin-bottom: 25px;
+      line-height: 1.6;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 13px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #111827;
+    }
+
+    .save-btn {
+      margin-top: 25px;
+      width: 100%;
+      border: none;
+      background: #111827;
+      color: white;
+      padding: 14px;
+      border-radius: 9px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .save-btn:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+
+    .message {
+      margin-top: 18px;
+      text-align: center;
+      font-weight: bold;
+      min-height: 20px;
+    }
+
+    .success {
+      color: #15803d;
+    }
+
+    .error {
+      color: #dc2626;
+    }
+
+    @media (max-width: 650px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .field.full {
+        grid-column: auto;
+      }
+
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>A Solution — Settings</h1>
+  <a href="dashboard.html">← Dashboard</a>
+</header>
+
+<div class="container">
+
+  <div class="panel">
+
+    <h2>Website Settings</h2>
+
+    <p class="intro">
+      Update the main contact information and social media links used on the website.
+    </p>
+
+    <form id="settingsForm">
+
+      <div class="form-grid">
+
+        <div class="field full">
+          <label for="siteName">Site Name</label>
+          <input type="text" id="siteName">
+        </div>
+
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email">
+        </div>
+
+        <div class="field">
+          <label for="phone">Phone</label>
+          <input type="text" id="phone">
+        </div>
+
+        <div class="field full">
+          <label for="whatsapp">WhatsApp Number</label>
+          <input
+            type="text"
+            id="whatsapp"
+            placeholder="966570909656"
+          >
+        </div>
+
+        <div class="field full">
+          <label for="location">Location</label>
+          <input type="text" id="location">
+        </div>
+
+        <div class="field">
+          <label for="instagram">Instagram</label>
+          <input type="url" id="instagram">
+        </div>
+
+        <div class="field">
+          <label for="xUrl">X</label>
+          <input type="url" id="xUrl">
+        </div>
+
+        <div class="field">
+          <label for="linkedin">LinkedIn</label>
+          <input type="url" id="linkedin">
+        </div>
+
+        <div class="field">
+          <label for="tiktok">TikTok</label>
+          <input type="url" id="tiktok">
+        </div>
+
+        <div class="field full">
+          <label for="snapchat">Snapchat</label>
+          <input type="url" id="snapchat">
+        </div>
+
+      </div>
+
+      <button
+        type="submit"
+        class="save-btn"
+        id="saveButton"
+      >
+        Save Settings
+      </button>
+
+      <div
+        id="message"
+        class="message"
+      ></div>
+
+    </form>
+
+  </div>
+
+</div>
+
+
+<script>
+
+  let settingsId = null;
+
+
+  async function checkAdmin() {
+
+    const {
+      data: { session }
+    } = await supabaseClient.auth.getSession();
+
+
+    if (!session) {
+
+      window.location.href = "index.html";
+
+      return false;
+    }
+
+
+    const {
+      data: profile,
+      error
+    } = await supabaseClient
+      .from("profiles")
+      .select("role")
+      .eq("id", session.user.id)
+      .single();
+
+
+    if (
+      error ||
+      !profile ||
+      profile.role !== "admin"
+    ) {
+
+      alert("You do not have admin permission.");
+
+      window.location.href = "index.html";
+
+      return false;
+    }
+
+
+    return true;
+  }
+
+
+
+  async function loadSettings() {
+
+    const {
+      data,
+      error
+    } = await supabaseClient
+      .from("settings")
+      .select("*")
+      .order("id", {
+        ascending: true
+      })
+      .limit(1)
+      .maybeSingle();
+
+
+    if (error) {
+
+      showMessage(
+        "Could not load settings: " +
+        error.message,
+        false
+      );
+
+      return;
+    }
+
+
+    if (!data) {
+
+      showMessage(
+        "No settings record found.",
+        false
+      );
+
+      return;
+    }
+
+
+    settingsId = data.id;
+
+
+    document.getElementById("siteName").value =
+      data.site_name || "";
+
+    document.getElementById("email").value =
+      data.email || "";
+
+    document.getElementById("phone").value =
+      data.phone || "";
+
+    document.getElementById("whatsapp").value =
+      data.whatsapp || "";
+
+    document.getElementById("location").value =
+      data.location || "";
+
+    document.getElementById("instagram").value =
+      data.instagram || "";
+
+    document.getElementById("xUrl").value =
+      data.x_url || "";
+
+    document.getElementById("linkedin").value =
+      data.linkedin || "";
+
+    document.getElementById("tiktok").value =
+      data.tiktok || "";
+
+    document.getElementById("snapchat").value =
+      data.snapchat || "";
+  }
+
+
+
+  async function saveSettings(event) {
+
+    event.preventDefault();
+
+
+    if (!settingsId) {
+
+      showMessage(
+        "Settings record was not found.",
+        false
+      );
+
+      return;
+    }
+
+
+    const saveButton =
+      document.getElementById("saveButton");
+
+
+    saveButton.disabled = true;
+
+    saveButton.textContent =
+      "Saving...";
+
+
+    const updates = {
+
+      site_name:
+        document
+          .getElementById("siteName")
+          .value
+          .trim(),
+
+      email:
+        document
+          .getElementById("email")
+          .value
+          .trim(),
+
+      phone:
+        document
+          .getElementById("phone")
+          .value
+          .trim(),
+
+      whatsapp:
+        document
+          .getElementById("whatsapp")
+          .value
+          .trim(),
+
+      location:
+        document
+          .getElementById("location")
+          .value
+          .trim(),
+
+      instagram:
+        document
+          .getElementById("instagram")
+          .value
+          .trim(),
+
+      x_url:
+        document
+          .getElementById("xUrl")
+          .value
+          .trim(),
+
+      linkedin:
+        document
+          .getElementById("linkedin")
+          .value
+          .trim(),
+
+      tiktok:
+        document
+          .getElementById("tiktok")
+          .value
+          .trim(),
+
+      snapchat:
+        document
+          .getElementById("snapchat")
+          .value
+          .trim()
+    };
+
+
+    const {
+      error
+    } = await supabaseClient
+      .from("settings")
+      .update(updates)
+      .eq("id", settingsId);
+
+
+    saveButton.disabled = false;
+
+    saveButton.textContent =
+      "Save Settings";
+
+
+    if (error) {
+
+      showMessage(
+        "Could not save settings: " +
+        error.message,
+        false
+      );
+
+      return;
+    }
+
+
+    showMessage(
+      "Settings saved successfully ✓",
+      true
+    );
+  }
+
+
+
+  function showMessage(text, success) {
+
+    const message =
+      document.getElementById("message");
+
+
+    message.textContent =
+      text;
+
+
+    message.className =
+      success
+        ? "message success"
+        : "message error";
+  }
+
+
+
+  async function startPage() {
+
+    const isAdmin =
+      await checkAdmin();
+
+
+    if (!isAdmin) {
+      return;
+    }
+
+
+    await loadSettings();
+  }
+
+
+
+  document
+    .getElementById("settingsForm")
+    .addEventListener(
+      "submit",
+      saveSettings
+    );
+
+
+  startPage();
+
+</script>
+
+</body>
+</html>
