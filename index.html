@@ -8,16 +8,18 @@
   <title>A solution — Digital Advertising & Media Solutions</title>
 
   <meta name="author" content="A solution">
-  <meta name="description" content="A solution helps brands rise above the noise through premium digital advertising, elevator screens, outdoor billboards, and signage media.">
+  <meta name="description"
+    content="A solution helps brands rise above the noise through premium digital advertising, elevator screens, outdoor billboards, and signage media.">
 
   <link rel="icon" href="favicon.png" type="image/png">
   <link rel="preload" as="image" href="a-solution-logo.png">
   <link rel="stylesheet" href="styles.css">
 
-  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
+    /* PROJECTS */
+
     .projects-section {
       padding: 96px 24px;
     }
@@ -50,16 +52,16 @@
 
     .project-card {
       overflow: hidden;
-      border: 1px solid rgba(0,0,0,.1);
+      border: 1px solid rgba(0, 0, 0, .1);
       border-radius: 18px;
       background: white;
-      box-shadow: 0 8px 25px rgba(0,0,0,.06);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, .06);
       transition: transform .25s ease, box-shadow .25s ease;
     }
 
     .project-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 15px 35px rgba(0,0,0,.12);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, .12);
     }
 
     .project-card img {
@@ -67,6 +69,16 @@
       height: 240px;
       object-fit: cover;
       display: block;
+    }
+
+    .project-placeholder {
+      width: 100%;
+      height: 240px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f3f4f6;
+      color: #6b7280;
     }
 
     .project-card-content {
@@ -104,6 +116,103 @@
       opacity: .65;
     }
 
+
+    /* CONTACT FORM */
+
+    .contact-form-wrap {
+      margin-top: 40px;
+      background: rgba(255, 255, 255, .12);
+      border: 1px solid rgba(255, 255, 255, .22);
+      border-radius: 22px;
+      padding: 25px;
+      backdrop-filter: blur(10px);
+    }
+
+    .contact-form {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .contact-field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .contact-field.full {
+      grid-column: 1 / -1;
+    }
+
+    .contact-field label {
+      font-size: 14px;
+      font-weight: 600;
+      color: white;
+    }
+
+    .contact-field input,
+    .contact-field textarea {
+      width: 100%;
+      padding: 13px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, .35);
+      background: rgba(255, 255, 255, .95);
+      color: #111827;
+      font-size: 15px;
+      outline: none;
+    }
+
+    .contact-field input:focus,
+    .contact-field textarea:focus {
+      border-color: white;
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, .18);
+    }
+
+    .contact-field textarea {
+      min-height: 130px;
+      resize: vertical;
+    }
+
+    .contact-submit {
+      grid-column: 1 / -1;
+      border: none;
+      padding: 14px 22px;
+      border-radius: 30px;
+      background: white;
+      color: #1a1a1a;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .contact-submit:hover {
+      transform: translateY(-2px);
+    }
+
+    .contact-submit:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .form-message {
+      grid-column: 1 / -1;
+      text-align: center;
+      min-height: 22px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .form-success {
+      color: #dcfce7;
+    }
+
+    .form-error {
+      color: #fee2e2;
+    }
+
+
     @media (max-width: 900px) {
       .projects-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -122,13 +231,29 @@
       .projects-heading h2 {
         font-size: 32px;
       }
+
+      .contact-form {
+        grid-template-columns: 1fr;
+      }
+
+      .contact-field.full,
+      .contact-submit,
+      .form-message {
+        grid-column: auto;
+      }
+
+      .contact-form-wrap {
+        padding: 18px;
+      }
     }
   </style>
 </head>
 
+
 <body>
 
 <div class="min-h-screen bg-background text-foreground">
+
 
   <!-- HEADER -->
 
@@ -137,6 +262,7 @@
     <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
 
       <a class="flex items-center gap-2" href="index.html">
+
         <img
           src="a-solution-logo.png"
           alt="A solution logo"
@@ -144,7 +270,9 @@
           width="120"
           height="32"
         >
+
       </a>
+
 
       <nav class="hidden items-center gap-8 text-sm font-medium text-muted-foreground md:flex">
 
@@ -170,6 +298,7 @@
 
       </nav>
 
+
       <a
         href="#contact"
         class="inline-flex items-center justify-center rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
@@ -180,6 +309,7 @@
     </div>
 
   </header>
+
 
 
   <!-- HERO -->
@@ -194,6 +324,7 @@
 
     </div>
 
+
     <div class="mx-auto max-w-4xl text-center">
 
       <img
@@ -203,6 +334,7 @@
         width="384"
         height="128"
       >
+
 
       <h1 class="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
 
@@ -216,11 +348,13 @@
 
       </h1>
 
+
       <p class="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground sm:text-xl">
 
         We place your brand where people look, pause, and remember — from elevator screens and billboards to digital signage networks.
 
       </p>
+
 
       <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
 
@@ -230,6 +364,7 @@
         >
           Start a campaign
         </a>
+
 
         <a
           href="#services"
@@ -243,6 +378,7 @@
     </div>
 
   </section>
+
 
 
   <!-- SERVICES -->
@@ -263,9 +399,12 @@
 
       </div>
 
+
       <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
 
+
         <div class="group rounded-2xl border border-border bg-card p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg">
+
           <h3 class="text-lg font-semibold text-card-foreground">
             Elevator Screen Media
           </h3>
@@ -273,9 +412,12 @@
           <p class="mt-2 text-sm leading-relaxed text-muted-foreground">
             Capture attention in high-dwell spaces with targeted digital displays inside premium residential and commercial towers.
           </p>
+
         </div>
 
+
         <div class="group rounded-2xl border border-border bg-card p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg">
+
           <h3 class="text-lg font-semibold text-card-foreground">
             Outdoor Billboards
           </h3>
@@ -283,9 +425,12 @@
           <p class="mt-2 text-sm leading-relaxed text-muted-foreground">
             Make a bold statement on the city skyline with strategically placed large-format static and digital billboards.
           </p>
+
         </div>
 
+
         <div class="group rounded-2xl border border-border bg-card p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg">
+
           <h3 class="text-lg font-semibold text-card-foreground">
             Digital Signage
           </h3>
@@ -293,9 +438,12 @@
           <p class="mt-2 text-sm leading-relaxed text-muted-foreground">
             Turn malls, retail stores, and transit hubs into dynamic brand experiences with networked signage.
           </p>
+
         </div>
 
+
         <div class="group rounded-2xl border border-border bg-card p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg">
+
           <h3 class="text-lg font-semibold text-card-foreground">
             Brand & Creative
           </h3>
@@ -303,13 +451,16 @@
           <p class="mt-2 text-sm leading-relaxed text-muted-foreground">
             From identity design to campaign assets, we craft visual systems that stay consistent across every screen and surface.
           </p>
+
         </div>
+
 
       </div>
 
     </div>
 
   </section>
+
 
 
   <!-- ABOUT -->
@@ -323,14 +474,18 @@
         <div>
 
           <h2 class="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+
             Why <span class="text-gradient">A solution</span>?
+
           </h2>
+
 
           <p class="mt-6 text-lg text-muted-foreground">
 
             In a world of scrolling feeds and skipped ads, real-world media still commands attention. We combine premium placements, sharp creative, and data-informed planning to help brands show up exactly where their audience is looking.
 
           </p>
+
 
           <p class="mt-4 text-lg text-muted-foreground">
 
@@ -343,33 +498,58 @@
 
         <div class="grid grid-cols-2 gap-4">
 
+
           <div class="rounded-2xl bg-card p-6 text-center shadow-sm">
-            <div class="text-3xl font-bold text-coral">+500</div>
+
+            <div class="text-3xl font-bold text-coral">
+              +500
+            </div>
+
             <div class="mt-1 text-sm text-muted-foreground">
               Active screens
             </div>
+
           </div>
 
+
           <div class="rounded-2xl bg-card p-6 text-center shadow-sm">
-            <div class="text-3xl font-bold text-berry">+120</div>
+
+            <div class="text-3xl font-bold text-berry">
+              +120
+            </div>
+
             <div class="mt-1 text-sm text-muted-foreground">
               Brand partners
             </div>
+
           </div>
 
+
           <div class="rounded-2xl bg-card p-6 text-center shadow-sm">
-            <div class="text-3xl font-bold text-indigo">+50</div>
+
+            <div class="text-3xl font-bold text-indigo">
+              +50
+            </div>
+
             <div class="mt-1 text-sm text-muted-foreground">
               Cities covered
             </div>
+
           </div>
 
+
           <div class="rounded-2xl bg-card p-6 text-center shadow-sm">
-            <div class="text-3xl font-bold text-coral-dark">24/7</div>
+
+            <div class="text-3xl font-bold text-coral-dark">
+              24/7
+            </div>
+
             <div class="mt-1 text-sm text-muted-foreground">
               Campaign support
             </div>
+
           </div>
+
 
         </div>
 
@@ -380,7 +560,8 @@
   </section>
 
 
-  <!-- PROJECTS FROM SUPABASE -->
+
+  <!-- PROJECTS -->
 
   <section id="projects" class="projects-section">
 
@@ -388,13 +569,16 @@
 
       <div class="projects-heading">
 
-        <h2>Our Projects</h2>
+        <h2>
+          Our Projects
+        </h2>
 
         <p>
           Explore some of our latest projects and media solutions.
         </p>
 
       </div>
+
 
       <div id="projectsGrid" class="projects-grid">
 
@@ -407,6 +591,7 @@
     </div>
 
   </section>
+
 
 
   <!-- BRAND -->
@@ -432,57 +617,81 @@
 
       <div class="grid gap-8 lg:grid-cols-2">
 
+
         <div class="rounded-2xl border border-border bg-card p-8">
 
           <h3 class="text-lg font-semibold text-card-foreground">
             Color palette
           </h3>
 
+
           <div class="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
 
+
             <div class="text-center">
+
               <div class="mx-auto h-16 w-16 rounded-2xl bg-coral shadow-sm"></div>
+
               <p class="mt-2 text-xs font-medium text-muted-foreground">
                 Coral
               </p>
+
               <p class="text-[10px] text-muted-foreground">
                 #ff6b6b
               </p>
+
             </div>
 
+
             <div class="text-center">
+
               <div class="mx-auto h-16 w-16 rounded-2xl bg-berry shadow-sm"></div>
+
               <p class="mt-2 text-xs font-medium text-muted-foreground">
                 Berry
               </p>
+
               <p class="text-[10px] text-muted-foreground">
                 #c44569
               </p>
+
             </div>
 
+
             <div class="text-center">
+
               <div class="mx-auto h-16 w-16 rounded-2xl bg-indigo shadow-sm"></div>
+
               <p class="mt-2 text-xs font-medium text-muted-foreground">
                 Indigo
               </p>
+
               <p class="text-[10px] text-muted-foreground">
                 #574b90
               </p>
+
             </div>
 
+
             <div class="text-center">
+
               <div class="mx-auto h-16 w-16 rounded-2xl bg-ink shadow-sm"></div>
+
               <p class="mt-2 text-xs font-medium text-muted-foreground">
                 Ink
               </p>
+
               <p class="text-[10px] text-muted-foreground">
                 #1a1a1a
               </p>
+
             </div>
+
 
           </div>
 
         </div>
+
 
 
         <div class="rounded-2xl border border-border bg-card p-8">
@@ -495,9 +704,11 @@
             Clean sans-serif system for web, print, and screen media.
           </p>
 
+
           <div class="mt-6 space-y-4">
 
             <div>
+
               <p class="text-2xl font-bold text-foreground">
                 Inter / Geist
               </p>
@@ -505,9 +716,12 @@
               <p class="text-sm text-muted-foreground">
                 Headings — bold, confident, modern
               </p>
+
             </div>
 
+
             <div>
+
               <p class="text-lg text-foreground">
                 Inter / Geist
               </p>
@@ -515,11 +729,13 @@
               <p class="text-sm text-muted-foreground">
                 Body — readable at any size
               </p>
+
             </div>
 
           </div>
 
         </div>
+
 
       </div>
 
@@ -536,6 +752,7 @@
 
         </div>
 
+
         <div class="flex items-center justify-center rounded-2xl bg-ink p-10">
 
           <img
@@ -548,9 +765,11 @@
 
       </div>
 
+
     </div>
 
   </section>
+
 
 
   <!-- IN THE WILD -->
@@ -559,20 +778,28 @@
 
     <div class="mx-auto max-w-7xl">
 
+
       <div class="mb-16 max-w-2xl">
 
         <h2 class="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+
           In the wild
+
         </h2>
 
+
         <p class="mt-4 text-lg text-muted-foreground">
+
           How the A solution brand lives across screens, surfaces, and stationery.
+
         </p>
 
       </div>
 
 
+
       <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+
 
         <div class="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
 
@@ -580,6 +807,7 @@
             src="a-solution-business-card.png"
             alt="A solution business card mockup"
             class="h-56 w-full object-cover"
+            loading="lazy"
           >
 
           <div class="p-4">
@@ -591,12 +819,14 @@
         </div>
 
 
+
         <div class="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
 
           <img
             src="a-solution-social-cover.png"
             alt="A solution social media cover"
             class="h-56 w-full object-cover object-left"
+            loading="lazy"
           >
 
           <div class="p-4">
@@ -608,12 +838,14 @@
         </div>
 
 
+
         <div class="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
 
           <img
             src="a-solution-elevator-mockup.png"
             alt="A solution elevator screen"
             class="h-56 w-full object-cover"
+            loading="lazy"
           >
 
           <div class="p-4">
@@ -625,12 +857,14 @@
         </div>
 
 
+
         <div class="overflow-hidden rounded-2xl border border-border bg-card shadow-sm md:col-span-2 lg:col-span-2">
 
           <img
             src="a-solution-billboard-mockup.png"
             alt="A solution billboard"
             class="h-56 w-full object-cover sm:h-72"
+            loading="lazy"
           >
 
           <div class="p-4">
@@ -642,12 +876,14 @@
         </div>
 
 
+
         <div class="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
 
           <img
             src="a-solution-signage-mockup.png"
             alt="A solution signage"
             class="h-56 w-full object-cover sm:h-72"
+            loading="lazy"
           >
 
           <div class="p-4">
@@ -658,6 +894,7 @@
 
         </div>
 
+
       </div>
 
     </div>
@@ -665,11 +902,13 @@
   </section>
 
 
+
   <!-- CONTACT -->
 
   <section id="contact" class="px-4 py-24 sm:px-6 lg:px-8">
 
-    <div class="mx-auto max-w-4xl rounded-3xl bg-gradient-brand p-8 text-white shadow-2xl shadow-coral/30 sm:p-12 lg:p-16">
+    <div class="mx-auto max-w-5xl rounded-3xl bg-gradient-brand p-8 text-white shadow-2xl shadow-coral/30 sm:p-12 lg:p-16">
+
 
       <div class="text-center">
 
@@ -679,23 +918,162 @@
 
         <p class="mt-4 text-lg text-white/90">
 
-          Tell us what you are building and we will recommend the right media mix.
+          Tell us about your project and our team will get back to you.
 
         </p>
 
       </div>
 
 
+
+      <!-- CONTACT FORM -->
+
+      <div class="contact-form-wrap">
+
+        <form id="contactForm" class="contact-form">
+
+
+          <div class="contact-field">
+
+            <label for="contactName">
+              Name *
+            </label>
+
+            <input
+              type="text"
+              id="contactName"
+              maxlength="120"
+              required
+              placeholder="Your name"
+            >
+
+          </div>
+
+
+
+          <div class="contact-field">
+
+            <label for="contactCompany">
+              Company
+            </label>
+
+            <input
+              type="text"
+              id="contactCompany"
+              maxlength="150"
+              placeholder="Company name"
+            >
+
+          </div>
+
+
+
+          <div class="contact-field">
+
+            <label for="contactEmail">
+              Email *
+            </label>
+
+            <input
+              type="email"
+              id="contactEmail"
+              maxlength="180"
+              required
+              placeholder="you@company.com"
+            >
+
+          </div>
+
+
+
+          <div class="contact-field">
+
+            <label for="contactPhone">
+              Phone
+            </label>
+
+            <input
+              type="tel"
+              id="contactPhone"
+              maxlength="50"
+              placeholder="+966..."
+            >
+
+          </div>
+
+
+
+          <div class="contact-field full">
+
+            <label for="contactSubject">
+              Subject
+            </label>
+
+            <input
+              type="text"
+              id="contactSubject"
+              maxlength="200"
+              placeholder="How can we help?"
+            >
+
+          </div>
+
+
+
+          <div class="contact-field full">
+
+            <label for="contactMessage">
+              Message *
+            </label>
+
+            <textarea
+              id="contactMessage"
+              maxlength="3000"
+              required
+              placeholder="Tell us about your project..."
+            ></textarea>
+
+          </div>
+
+
+
+          <button
+            type="submit"
+            class="contact-submit"
+            id="contactSubmit"
+          >
+            Send Message
+          </button>
+
+
+          <div
+            id="contactFormMessage"
+            class="form-message"
+          ></div>
+
+
+        </form>
+
+      </div>
+
+
+
+      <!-- CONTACT INFORMATION -->
+
       <div class="mt-12 grid gap-6 sm:grid-cols-3">
+
 
         <a
           href="mailto:info@asolution.sa"
           class="flex flex-col items-center gap-3 rounded-2xl bg-white/10 p-6 text-center backdrop-blur-sm transition-colors hover:bg-white/20"
         >
+
           <span class="text-sm font-medium">
             info@asolution.sa
           </span>
+
         </a>
+
 
 
         <a
@@ -704,10 +1082,13 @@
           rel="noreferrer"
           class="flex flex-col items-center gap-3 rounded-2xl bg-white/10 p-6 text-center backdrop-blur-sm transition-colors hover:bg-white/20"
         >
+
           <span class="text-sm font-medium">
             +966 57 090 9656
           </span>
+
         </a>
+
 
 
         <div class="flex flex-col items-center gap-3 rounded-2xl bg-white/10 p-6 text-center backdrop-blur-sm">
@@ -718,11 +1099,14 @@
 
         </div>
 
+
       </div>
+
 
     </div>
 
   </section>
+
 
 
   <!-- FOOTER -->
@@ -730,6 +1114,7 @@
   <footer class="border-t border-border bg-secondary px-4 py-12 sm:px-6 lg:px-8">
 
     <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 sm:flex-row">
+
 
       <img
         src="a-solution-logo.png"
@@ -739,9 +1124,11 @@
         height="28"
       >
 
+
       <p class="text-sm text-muted-foreground">
         © 2026 A solution. All rights reserved.
       </p>
+
 
       <div class="flex gap-6 text-sm text-muted-foreground">
 
@@ -759,27 +1146,38 @@
 
       </div>
 
+
     </div>
 
   </footer>
 
+
 </div>
 
 
-<!-- PROJECTS DATABASE -->
 
 <script>
+
+  /* SUPABASE */
+
   const SUPABASE_URL =
     "https://bgxtcpcbkjftkgswpizr.supabase.co";
 
   const SUPABASE_KEY =
     "sb_publishable_t9MKvlsLheyCj-o-jIQ04A_9sGI_j_r";
 
+
   const websiteSupabase =
     window.supabase.createClient(
       SUPABASE_URL,
       SUPABASE_KEY
     );
+
+
+
+  /* ==============================
+     PROJECTS
+  ============================== */
 
 
   function createProjectCard(project) {
@@ -806,6 +1204,20 @@
         "lazy";
 
       card.appendChild(image);
+
+    } else {
+
+      const placeholder =
+        document.createElement("div");
+
+      placeholder.className =
+        "project-placeholder";
+
+      placeholder.textContent =
+        "A Solution Project";
+
+      card.appendChild(placeholder);
+
     }
 
 
@@ -834,37 +1246,62 @@
         project.description;
 
       content.appendChild(description);
+
     }
 
 
     if (project.project_url) {
 
-      const link =
-        document.createElement("a");
+      try {
 
-      link.href =
-        project.project_url;
+        const url =
+          new URL(project.project_url);
 
-      link.target =
-        "_blank";
+        if (
+          url.protocol === "http:" ||
+          url.protocol === "https:"
+        ) {
 
-      link.rel =
-        "noopener noreferrer";
+          const link =
+            document.createElement("a");
 
-      link.className =
-        "project-button";
+          link.href =
+            url.href;
 
-      link.textContent =
-        "View Project";
+          link.target =
+            "_blank";
 
-      content.appendChild(link);
+          link.rel =
+            "noopener noreferrer";
+
+          link.className =
+            "project-button";
+
+          link.textContent =
+            "View Project";
+
+          content.appendChild(link);
+
+        }
+
+      } catch (error) {
+
+        console.warn(
+          "Invalid project URL",
+          project.project_url
+        );
+
+      }
+
     }
 
 
     card.appendChild(content);
 
     return card;
+
   }
+
 
 
   async function loadWebsiteProjects() {
@@ -902,7 +1339,8 @@
       }
 
 
-      projectsGrid.innerHTML = "";
+      projectsGrid.innerHTML =
+        "";
 
 
       if (
@@ -914,6 +1352,7 @@
           '<p class="projects-message">New projects coming soon.</p>';
 
         return;
+
       }
 
 
@@ -935,6 +1374,7 @@
         error
       );
 
+
       projectsGrid.innerHTML =
         '<p class="projects-message">Projects are currently unavailable.</p>';
 
@@ -943,8 +1383,209 @@
   }
 
 
+
+  /* ==============================
+     CONTACT MESSAGES
+  ============================== */
+
+
+  const contactForm =
+    document.getElementById(
+      "contactForm"
+    );
+
+
+  contactForm.addEventListener(
+    "submit",
+    async function(event) {
+
+      event.preventDefault();
+
+
+      const submitButton =
+        document.getElementById(
+          "contactSubmit"
+        );
+
+
+      const formMessage =
+        document.getElementById(
+          "contactFormMessage"
+        );
+
+
+      const name =
+        document
+          .getElementById(
+            "contactName"
+          )
+          .value
+          .trim();
+
+
+      const company =
+        document
+          .getElementById(
+            "contactCompany"
+          )
+          .value
+          .trim();
+
+
+      const email =
+        document
+          .getElementById(
+            "contactEmail"
+          )
+          .value
+          .trim();
+
+
+      const phone =
+        document
+          .getElementById(
+            "contactPhone"
+          )
+          .value
+          .trim();
+
+
+      const subject =
+        document
+          .getElementById(
+            "contactSubject"
+          )
+          .value
+          .trim();
+
+
+      const message =
+        document
+          .getElementById(
+            "contactMessage"
+          )
+          .value
+          .trim();
+
+
+
+      if (
+        !name ||
+        !email ||
+        !message
+      ) {
+
+        formMessage.className =
+          "form-message form-error";
+
+        formMessage.textContent =
+          "Please complete the required fields.";
+
+        return;
+
+      }
+
+
+
+      submitButton.disabled =
+        true;
+
+      submitButton.textContent =
+        "Sending...";
+
+
+      formMessage.className =
+        "form-message";
+
+      formMessage.textContent =
+        "";
+
+
+
+      try {
+
+        const {
+          error
+        } = await websiteSupabase
+          .from("messages")
+          .insert([
+            {
+              name: name,
+
+              company:
+                company || null,
+
+              email: email,
+
+              phone:
+                phone || null,
+
+              subject:
+                subject || null,
+
+              message: message,
+
+              status: "new"
+            }
+          ]);
+
+
+        if (error) {
+          throw error;
+        }
+
+
+
+        contactForm.reset();
+
+
+        formMessage.className =
+          "form-message form-success";
+
+
+        formMessage.textContent =
+          "Thank you! Your message has been sent successfully.";
+
+
+
+      } catch (error) {
+
+        console.error(
+          "Message sending error:",
+          error
+        );
+
+
+        formMessage.className =
+          "form-message form-error";
+
+
+        formMessage.textContent =
+          "We could not send your message. Please try again.";
+
+      }
+
+
+
+      submitButton.disabled =
+        false;
+
+
+      submitButton.textContent =
+        "Send Message";
+
+    }
+  );
+
+
+
+  /* START */
+
   loadWebsiteProjects();
+
 </script>
 
+
 </body>
+
 </html>
