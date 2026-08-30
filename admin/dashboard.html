@@ -9,7 +9,9 @@
   <script src="supabase-client.js"></script>
 
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
@@ -54,13 +56,46 @@
     }
 
     .welcome h2 {
-      margin-bottom: 8px;
-      font-size: 28px;
+      margin: 0 0 8px;
+      font-size: 30px;
     }
 
     .welcome p {
       color: #6b7280;
-      margin-top: 0;
+      margin: 0;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 24px;
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 4px 15px rgba(0,0,0,.05);
+    }
+
+    .stat-card p {
+      margin: 0;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .stat-card h3 {
+      margin: 10px 0 0;
+      font-size: 34px;
+      color: #111827;
+    }
+
+    .stat-card small {
+      display: block;
+      margin-top: 8px;
+      color: #9ca3af;
     }
 
     .grid {
@@ -97,6 +132,53 @@
       line-height: 1.6;
     }
 
+    .section-title {
+      margin: 35px 0 18px;
+      font-size: 22px;
+    }
+
+    .follow-up-box {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 22px;
+      box-shadow: 0 4px 15px rgba(0,0,0,.05);
+    }
+
+    .follow-up-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      padding: 14px 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .follow-up-item:last-child {
+      border-bottom: 0;
+    }
+
+    .follow-up-name {
+      font-weight: bold;
+    }
+
+    .follow-up-company {
+      color: #6b7280;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .follow-up-date {
+      font-size: 14px;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .empty-message {
+      color: #6b7280;
+      margin: 0;
+    }
+
     .status {
       margin-top: 30px;
       background: white;
@@ -106,12 +188,24 @@
       color: #6b7280;
     }
 
+    @media (max-width: 900px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
     @media (max-width: 700px) {
-      .grid {
+      .grid,
+      .stats-grid {
         grid-template-columns: 1fr;
       }
 
       header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .follow-up-item {
         align-items: flex-start;
         flex-direction: column;
       }
@@ -123,6 +217,7 @@
 
 <header>
   <h1>A Solution Admin</h1>
+
   <button
     class="logout-btn"
     id="logoutButton"
@@ -136,11 +231,42 @@
 
   <div class="welcome">
     <h2>Admin Dashboard</h2>
-    <p>
-      Manage your website, projects, clients,
-      messages and settings.
-    </p>
+    <p>Live overview of your website and client activity.</p>
   </div>
+
+
+  <!-- LIVE STATISTICS -->
+
+  <div class="stats-grid">
+
+    <div class="stat-card">
+      <p>Total Projects</p>
+      <h3 id="projectsCount">...</h3>
+      <small>All website projects</small>
+    </div>
+
+    <div class="stat-card">
+      <p>Total Clients</p>
+      <h3 id="clientsCount">...</h3>
+      <small>Clients and leads</small>
+    </div>
+
+    <div class="stat-card">
+      <p>New Messages</p>
+      <h3 id="messagesCount">...</h3>
+      <small>Unread website enquiries</small>
+    </div>
+
+    <div class="stat-card">
+      <p>Upcoming Follow-ups</p>
+      <h3 id="followUpsCount">...</h3>
+      <small>Scheduled client follow-ups</small>
+    </div>
+
+  </div>
+
+
+  <!-- ADMIN SECTIONS -->
 
   <div class="grid">
 
@@ -178,6 +304,23 @@
 
   </div>
 
+
+  <!-- FOLLOW UPS -->
+
+  <h3 class="section-title">
+    Upcoming Follow-ups
+  </h3>
+
+  <div
+    class="follow-up-box"
+    id="followUpsList"
+  >
+    <p class="empty-message">
+      Loading follow-ups...
+    </p>
+  </div>
+
+
   <div
     class="status"
     id="adminStatus"
@@ -186,6 +329,7 @@
   </div>
 
 </div>
+
 
 <script>
 
@@ -198,7 +342,7 @@
 
     if (sessionError || !session) {
       window.location.href = "index.html";
-      return;
+      return false;
     }
 
     const {
@@ -222,13 +366,230 @@
 
       window.location.href = "index.html";
 
-      return;
+      return false;
     }
 
     document.getElementById(
       "adminStatus"
     ).textContent =
       "Admin access confirmed ✓";
+
+    return true;
+  }
+
+
+  async function loadStatistics() {
+
+    try {
+
+      const [
+        projectsResult,
+        clientsResult,
+        messagesResult,
+        followUpsResult
+      ] = await Promise.all([
+
+        supabaseClient
+          .from("projects")
+          .select("*", {
+            count: "exact",
+            head: true
+          }),
+
+        supabaseClient
+          .from("clients")
+          .select("*", {
+            count: "exact",
+            head: true
+          }),
+
+        supabaseClient
+          .from("messages")
+          .select("*", {
+            count: "exact",
+            head: true
+          })
+          .eq("status", "new"),
+
+        supabaseClient
+          .from("clients")
+          .select("*", {
+            count: "exact",
+            head: true
+          })
+          .not(
+            "next_follow_up",
+            "is",
+            null
+          )
+
+      ]);
+
+
+      document.getElementById(
+        "projectsCount"
+      ).textContent =
+        projectsResult.count ?? 0;
+
+
+      document.getElementById(
+        "clientsCount"
+      ).textContent =
+        clientsResult.count ?? 0;
+
+
+      document.getElementById(
+        "messagesCount"
+      ).textContent =
+        messagesResult.count ?? 0;
+
+
+      document.getElementById(
+        "followUpsCount"
+      ).textContent =
+        followUpsResult.count ?? 0;
+
+
+    } catch (error) {
+
+      console.error(
+        "Statistics error:",
+        error
+      );
+
+    }
+  }
+
+
+  async function loadFollowUps() {
+
+    const container =
+      document.getElementById(
+        "followUpsList"
+      );
+
+
+    const today =
+      new Date()
+        .toISOString()
+        .split("T")[0];
+
+
+    const {
+      data,
+      error
+    } = await supabaseClient
+      .from("clients")
+      .select(
+        "id,name,company,next_follow_up,status"
+      )
+      .not(
+        "next_follow_up",
+        "is",
+        null
+      )
+      .gte(
+        "next_follow_up",
+        today
+      )
+      .order(
+        "next_follow_up",
+        {
+          ascending: true
+        }
+      )
+      .limit(5);
+
+
+    if (error) {
+
+      console.error(
+        "Follow-up loading error:",
+        error
+      );
+
+      container.innerHTML =
+        '<p class="empty-message">Could not load follow-ups.</p>';
+
+      return;
+    }
+
+
+    container.innerHTML = "";
+
+
+    if (
+      !data ||
+      data.length === 0
+    ) {
+
+      container.innerHTML =
+        '<p class="empty-message">No upcoming follow-ups.</p>';
+
+      return;
+    }
+
+
+    data.forEach(
+      function(client) {
+
+        const item =
+          document.createElement("div");
+
+        item.className =
+          "follow-up-item";
+
+
+        const info =
+          document.createElement("div");
+
+
+        const name =
+          document.createElement("div");
+
+        name.className =
+          "follow-up-name";
+
+        name.textContent =
+          client.name ||
+          "Unnamed Client";
+
+
+        const company =
+          document.createElement("div");
+
+        company.className =
+          "follow-up-company";
+
+        company.textContent =
+          client.company ||
+          client.status ||
+          "";
+
+
+        info.appendChild(name);
+
+        info.appendChild(company);
+
+
+        const date =
+          document.createElement("div");
+
+        date.className =
+          "follow-up-date";
+
+        date.textContent =
+          client.next_follow_up;
+
+
+        item.appendChild(info);
+
+        item.appendChild(date);
+
+        container.appendChild(item);
+
+      }
+    );
   }
 
 
@@ -236,7 +597,24 @@
 
     await supabaseClient.auth.signOut();
 
-    window.location.href = "index.html";
+    window.location.href =
+      "index.html";
+  }
+
+
+  async function startDashboard() {
+
+    const allowed =
+      await checkAdminAccess();
+
+    if (!allowed) {
+      return;
+    }
+
+    await Promise.all([
+      loadStatistics(),
+      loadFollowUps()
+    ]);
   }
 
 
@@ -248,7 +626,7 @@
     );
 
 
-  checkAdminAccess();
+  startDashboard();
 
 </script>
 
