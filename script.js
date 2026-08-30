@@ -1,102 +1,109 @@
 (() => {
-  const $ = (s, p = document) => p.querySelector(s);
-  const $$ = (s, p = document) => [...p.querySelectorAll(s)];
+  const root = document.documentElement;
+  const cursor = document.querySelector('.cursor');
+  const progress = document.querySelector('.progress span');
+  const aObject = document.querySelector('.a-object');
+  const serviceWord = document.querySelector('.service-word');
+  const serviceIndex = document.querySelector('.service-index');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  $('#year').textContent = new Date().getFullYear();
+  document.getElementById('year').textContent = new Date().getFullYear();
 
-  // Header
-  const header = $('[data-header]');
-  const syncHeader = () => header.classList.toggle('scrolled', scrollY > 25);
-  syncHeader(); addEventListener('scroll', syncHeader, { passive: true });
-
-  // Mobile menu
-  const toggle = $('[data-menu-toggle]');
-  const menu = $('[data-mobile-menu]');
-  toggle?.addEventListener('click', () => {
-    const open = menu.classList.toggle('open');
-    toggle.setAttribute('aria-expanded', String(open));
-    document.body.style.overflow = open ? 'hidden' : '';
-  });
-  $$('[data-mobile-menu] a').forEach(a => a.addEventListener('click', () => {
-    menu.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); document.body.style.overflow='';
-  }));
-
-  // Reveal on scroll
-  const observer = new IntersectionObserver(entries => entries.forEach(entry => {
-    if (entry.isIntersecting) { entry.target.classList.add('in'); observer.unobserve(entry.target); }
-  }), { threshold: .12, rootMargin: '0px 0px -7% 0px' });
-  $$('.reveal').forEach(el => observer.observe(el));
-
-  // Count up
-  const countObserver = new IntersectionObserver(entries => entries.forEach(entry => {
-    if (!entry.isIntersecting) return;
-    const el = entry.target, target = Number(el.dataset.count || 0), start = performance.now();
-    const tick = now => { const p = Math.min(1,(now-start)/1100), eased=1-Math.pow(1-p,3); el.textContent=Math.round(target*eased)+(target===360?'°':''); if(p<1) requestAnimationFrame(tick); };
-    requestAnimationFrame(tick); countObserver.unobserve(el);
-  }), { threshold:.5 });
-  $$('[data-count]').forEach(el => countObserver.observe(el));
-
-  if (!reduced) {
-    // Parallax
-    let ticking = false;
-    addEventListener('scroll', () => { if (ticking) return; ticking=true; requestAnimationFrame(() => {
-      $$('[data-parallax]').forEach(el => { const speed=Number(el.dataset.parallax||.05); const r=el.getBoundingClientRect(); const center=r.top+r.height/2-innerHeight/2; el.style.transform=`translate3d(0,${center*-speed}px,0)`; }); ticking=false;
-    }); }, {passive:true});
-
-    // 3D tilt with subtle motion
-    $$('[data-tilt]').forEach(el => {
-      el.addEventListener('pointermove', e => { const r=el.getBoundingClientRect(), x=(e.clientX-r.left)/r.width-.5, y=(e.clientY-r.top)/r.height-.5; el.style.transform=`perspective(900px) rotateX(${y*-3}deg) rotateY(${x*4}deg) scale(1.01)`; });
-      el.addEventListener('pointerleave', () => el.style.transform='');
+  if (!reduced && matchMedia('(pointer:fine)').matches) {
+    addEventListener('pointermove', e => {
+      cursor.style.left = `${e.clientX}px`;
+      cursor.style.top = `${e.clientY}px`;
+      const x = (e.clientX / innerWidth - .5) * 16;
+      const y = (e.clientY / innerHeight - .5) * 12;
+      if (aObject) aObject.style.transform = `translateY(-50%) translate(${x}px,${y}px) rotate(${x * .08}deg)`;
     });
-
-    // Custom cursor
-    const dot=$('.cursor-dot'), ring=$('.cursor-ring');
-    addEventListener('pointermove', e => { if(!dot||!ring)return; dot.style.transform=`translate(${e.clientX-2.5}px,${e.clientY-2.5}px)`; ring.animate({transform:`translate(${e.clientX-17}px,${e.clientY-17}px)`},{duration:220,fill:'forwards'}); });
-    $$('a,button,[data-tilt]').forEach(el => { el.addEventListener('pointerenter',()=>ring?.classList.add('active')); el.addEventListener('pointerleave',()=>ring?.classList.remove('active')); });
-
-    // Magnetic buttons
-    $$('.magnetic').forEach(el => { el.addEventListener('pointermove', e => { const r=el.getBoundingClientRect(); el.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.08}px,${(e.clientY-r.top-r.height/2)*.12}px)`; }); el.addEventListener('pointerleave',()=>el.style.transform=''); });
+    document.querySelectorAll('a,button,.project').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('big'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
+    });
   }
 
-  // Optional Supabase integration. Keep current project values in window.ASOLUTION_SUPABASE.
-  const config = window.ASOLUTION_SUPABASE;
-  let db = null;
-  if (config?.url && config?.key && window.supabase) db = window.supabase.createClient(config.url, config.key);
+  const reveals = new IntersectionObserver(entries => entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('in');
+  }), {threshold:.14});
+  document.querySelectorAll('.reveal').forEach(el => reveals.observe(el));
 
-  const loadSettings = async () => {
+  const serviceObserver = new IntersectionObserver(entries => entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    document.querySelectorAll('.service').forEach(s => s.classList.remove('active'));
+    e.target.classList.add('active');
+    serviceWord.textContent = e.target.dataset.word;
+    serviceIndex.textContent = e.target.dataset.index;
+    serviceWord.style.color = e.target.dataset.accent;
+  }), {rootMargin:'-35% 0px -35% 0px', threshold:.05});
+  document.querySelectorAll('.service').forEach(el => serviceObserver.observe(el));
+
+  addEventListener('scroll', () => {
+    const max = document.documentElement.scrollHeight - innerHeight;
+    progress.style.transform = `scaleX(${max ? scrollY / max : 0})`;
+    if (!reduced) {
+      document.querySelectorAll('.kinetic').forEach((el, i) => {
+        const r = el.getBoundingClientRect();
+        const shift = Math.max(-80, Math.min(80, (innerHeight * .55 - r.top) * (i % 2 ? -.035 : .035)));
+        el.style.setProperty('--shift', `${shift}px`);
+      });
+    }
+  }, {passive:true});
+
+  document.querySelectorAll('.magnetic').forEach(el => {
+    if (reduced) return;
+    el.addEventListener('pointermove', e => {
+      const r = el.getBoundingClientRect();
+      el.style.transform = `translate(${(e.clientX-r.left-r.width/2)*.12}px,${(e.clientY-r.top-r.height/2)*.12}px)`;
+    });
+    el.addEventListener('pointerleave', () => el.style.transform = '');
+  });
+
+  const cfg = window.ASOLUTION_SUPABASE;
+  const db = cfg && window.supabase ? window.supabase.createClient(cfg.url, cfg.key) : null;
+
+  async function loadSettings() {
     if (!db) return;
     try {
-      const { data, error } = await db.from('settings').select('*').limit(1).maybeSingle();
+      const {data, error} = await db.from('settings').select('*').limit(1).maybeSingle();
       if (error || !data) return;
-      const email = $('[data-setting-email]'), phone=$('[data-setting-phone]'), location=$('[data-setting-location]');
-      if(data.email && email){email.textContent=data.email;email.href=`mailto:${data.email}`}
-      if(data.phone && phone){phone.textContent=data.phone;phone.href=`tel:${String(data.phone).replace(/\s+/g,'')}`}
-      if(data.location && location)location.textContent=data.location;
-      ['instagram','linkedin','x_url','tiktok'].forEach(k=>{const a=$(`[data-social="${k}"]`);if(a&&data[k]){a.href=data[k];a.target='_blank';a.rel='noopener'}});
+      const email = data.email || data.contact_email;
+      const phone = data.phone || data.contact_phone;
+      const location = data.location || data.address;
+      if (email) { const el=document.getElementById('contact-email'); el.textContent=email; el.href=`mailto:${email}`; }
+      if (phone) { const el=document.getElementById('contact-phone'); el.textContent=phone; el.href=`tel:${phone.replace(/[^+\d]/g,'')}`; }
+      if (location) document.getElementById('contact-location').textContent=location;
+      const socialMap = [['Instagram',data.instagram],['X',data.x || data.twitter],['LinkedIn',data.linkedin],['TikTok',data.tiktok],['Snapchat',data.snapchat]];
+      const box=document.getElementById('socials');
+      socialMap.filter(([,url])=>url).forEach(([name,url])=>{const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener';a.textContent=name;box.appendChild(a)});
     } catch (_) {}
-  };
-  loadSettings();
+  }
 
-  // Contact form: sends to Supabase when configured; otherwise opens email fallback.
-  const form=$('#contactForm'), status=$('.form-status');
-  form?.addEventListener('submit', async e => {
-    e.preventDefault();
-    if(!form.reportValidity()) return;
-    const values=Object.fromEntries(new FormData(form).entries());
-    const btn=$('button[type="submit"]',form); btn.disabled=true; status.textContent='Sending…';
+  async function loadProjects() {
+    if (!db) return;
     try {
-      if(db){
-        const { error }=await db.from('messages').insert({name:values.name,email:values.email,phone:values.phone||null,message:values.message});
-        if(error) throw error;
-        status.textContent='Thank you. We’ll be in touch shortly.'; form.reset();
-      } else {
-        const subject=encodeURIComponent(`New inquiry from ${values.name}`);
-        const body=encodeURIComponent(`Name: ${values.name}\nEmail: ${values.email}\nPhone: ${values.phone||'-'}\n\n${values.message}`);
-        location.href=`mailto:info@asolution.sa?subject=${subject}&body=${body}`;
-        status.textContent='Your email app is opening…';
-      }
-    } catch(err){status.textContent='Could not send right now. Please email info@asolution.sa.'}
-    finally{btn.disabled=false}
+      const {data,error}=await db.from('projects').select('*').eq('published',true).order('created_at',{ascending:false}).limit(6);
+      if(error || !data?.length) return;
+      const list=document.getElementById('project-list'); list.innerHTML='';
+      data.forEach((p,i)=>{
+        const title=p.title || p.name || `Project ${i+1}`;
+        const cat=p.category || p.service || 'A Solution';
+        const article=document.createElement('article'); article.className='project';
+        article.innerHTML=`<span class="project-no">${String(i+1).padStart(2,'0')}</span><div><small></small><h3></h3></div><span class="project-arrow">↗</span>`;
+        article.querySelector('small').textContent=cat; article.querySelector('h3').textContent=title;
+        list.appendChild(article);
+      });
+    } catch (_) {}
+  }
+
+  const form=document.getElementById('contact-form');
+  form.addEventListener('submit', async e => {
+    e.preventDefault(); const status=document.getElementById('form-status'); const btn=form.querySelector('button');
+    if(!db){status.textContent='Connection is temporarily unavailable.';return}
+    const fd=new FormData(form); btn.disabled=true; status.textContent='Sending…';
+    const payload={name:fd.get('name').trim(),email:fd.get('email').trim(),phone:fd.get('phone').trim(),message:fd.get('message').trim(),status:'new'};
+    try{const {error}=await db.from('messages').insert(payload);if(error)throw error;form.reset();status.textContent='Received. We’ll be in touch.'}catch(err){console.error(err);status.textContent='Could not send right now. Please email us directly.'}finally{btn.disabled=false}
   });
+
+  loadSettings(); loadProjects();
 })();
