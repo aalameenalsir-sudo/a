@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clients | A Solution Admin</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f6f8;
+      color: #1a1a1a;
+    }
+
+    header {
+      background: #111827;
+      color: white;
+      padding: 18px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    header a {
+      color: white;
+      text-decoration: none;
+      background: #374151;
+      padding: 10px 16px;
+      border-radius: 8px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    .panel {
+      background: white;
+      padding: 25px;
+      border-radius: 14px;
+      box-shadow: 0 4px 15px rgba(0,0,0,.06);
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 11px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    button {
+      border: none;
+      padding: 11px 17px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .primary {
+      background: #111827;
+      color: white;
+    }
+
+    .secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .danger {
+      background: #dc2626;
+      color: white;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .message {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 950px;
+    }
+
+    th,
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f9fafb;
+      font-size: 13px;
+    }
+
+    td {
+      font-size: 14px;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 20px;
+      background: #eef2ff;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .empty {
+      text-align: center;
+      color: #6b7280;
+      padding: 30px;
+    }
+
+    @media (max-width: 700px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .full {
+        grid-column: auto;
+      }
+
+      header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>A Solution — Clients</h1>
+  <a href="dashboard.html">← Dashboard</a>
+</header>
+
+<div class="container">
+
+  <div class="panel">
+    <h2 id="formTitle">Add Client</h2>
+
+    <form id="clientForm">
+
+      <div class="form-grid">
+
+        <div>
+          <label>Client Name *</label>
+          <input id="name" type="text" required>
+        </div>
+
+        <div>
+          <label>Company</label>
+          <input id="company" type="text">
+        </div>
+
+        <div>
+          <label>Email</label>
+          <input id="email" type="email">
+        </div>
+
+        <div>
+          <label>Phone</label>
+          <input id="phone" type="text">
+        </div>
+
+        <div>
+          <label>Status</label>
+
+          <select id="status">
+            <option value="lead">Lead</option>
+            <option value="contacted">Contacted</option>
+            <option value="interested">Interested</option>
+            <option value="active">Active Client</option>
+            <option value="follow_up">Follow Up</option>
+            <option value="closed">Closed</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Next Follow Up</label>
+          <input id="next_follow_up" type="date">
+        </div>
+
+        <div class="full">
+          <label>Notes</label>
+          <textarea id="notes"></textarea>
+        </div>
+
+      </div>
+
+      <div class="actions" style="margin-top:20px;">
+        <button class="primary" type="submit" id="saveButton">
+          Add Client
+        </button>
+
+        <button
+          class="secondary"
+          type="button"
+          id="cancelButton"
+          style="display:none;"
+        >
+          Cancel Edit
+        </button>
+      </div>
+
+      <div id="message" class="message"></div>
+
+    </form>
+  </div>
+
+
+  <div class="panel">
+
+    <h2>Clients</h2>
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Company</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Next Follow Up</th>
+            <th>Notes</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody id="clientsTable">
+          <tr>
+            <td colspan="8" class="empty">
+              Loading clients...
+            </td>
+          </tr>
+        </tbody>
+
+      </table>
+
+    </div>
+  </div>
+
+</div>
+
+
+<script>
+  let editingClientId = null;
+  let clientsCache = [];
+
+
+  async function checkAdmin() {
+
+    const {
+      data: { session }
+    } = await supabaseClient.auth.getSession();
+
+    if (!session) {
+      window.location.href = "index.html";
+      return false;
+    }
+
+    const { data: profile, error } =
+      await supabaseClient
+        .from("profiles")
+        .select("role")
+        .eq("id", session.user.id)
+        .single();
+
+    if (error || !profile || profile.role !== "admin") {
+      alert("You do not have admin permission.");
+      window.location.href = "index.html";
+      return false;
+    }
+
+    return true;
+  }
+
+
+  async function loadClients() {
+
+    const table =
+      document.getElementById("clientsTable");
+
+    table.innerHTML =
+      '<tr><td colspan="8" class="empty">Loading clients...</td></tr>';
+
+
+    const { data, error } =
+      await supabaseClient
+        .from("clients")
+        .select("*")
+        .order("created_at", {
+          ascending: false
+        });
+
+
+    if (error) {
+
+      console.error(error);
+
+      table.innerHTML =
+        '<tr><td colspan="8" class="empty">Could not load clients.</td></tr>';
+
+      return;
+    }
+
+
+    clientsCache = data || [];
+
+    renderClients();
+  }
+
+
+  function renderClients() {
+
+    const table =
+      document.getElementById("clientsTable");
+
+    table.innerHTML = "";
+
+
+    if (clientsCache.length === 0) {
+
+      table.innerHTML =
+        '<tr><td colspan="8" class="empty">No clients yet.</td></tr>';
+
+      return;
+    }
+
+
+    clientsCache.forEach(client => {
+
+      const row =
+        document.createElement("tr");
+
+
+      addCell(row, client.name || "-");
+      addCell(row, client.company || "-");
+      addCell(row, client.phone || "-");
+      addCell(row, client.email || "-");
+
+
+      const statusCell =
+        document.createElement("td");
+
+      const statusBadge =
+        document.createElement("span");
+
+      statusBadge.className = "status";
+
+      statusBadge.textContent =
+        formatStatus(client.status);
+
+      statusCell.appendChild(statusBadge);
+
+      row.appendChild(statusCell);
+
+
+      addCell(
+        row,
+        client.next_follow_up || "-"
+      );
+
+      addCell(
+        row,
+        client.notes || "-"
+      );
+
+
+      const actionsCell =
+        document.createElement("td");
+
+      const actions =
+        document.createElement("div");
+
+      actions.className = "actions";
+
+
+      const editButton =
+        document.createElement("button");
+
+      editButton.className = "secondary";
+      editButton.textContent = "Edit";
+
+      editButton.addEventListener(
+        "click",
+        () => editClient(client.id)
+      );
+
+
+      const deleteButton =
+        document.createElement("button");
+
+      deleteButton.className = "danger";
+      deleteButton.textContent = "Delete";
+
+      deleteButton.addEventListener(
+        "click",
+        () => deleteClient(client.id)
+      );
+
+
+      actions.appendChild(editButton);
+      actions.appendChild(deleteButton);
+
+      actionsCell.appendChild(actions);
+
+      row.appendChild(actionsCell);
+
+      table.appendChild(row);
+    });
+  }
+
+
+  function addCell(row, value) {
+
+    const cell =
+      document.createElement("td");
+
+    cell.textContent = value;
+
+    row.appendChild(cell);
+  }
+
+
+  function formatStatus(status) {
+
+    const statuses = {
+      lead: "Lead",
+      contacted: "Contacted",
+      interested: "Interested",
+      active: "Active Client",
+      follow_up: "Follow Up",
+      closed: "Closed"
+    };
+
+    return statuses[status] || status || "Lead";
+  }
+
+
+  document
+    .getElementById("clientForm")
+    .addEventListener(
+      "submit",
+      async function(event) {
+
+        event.preventDefault();
+
+        const message =
+          document.getElementById("message");
+
+        const saveButton =
+          document.getElementById("saveButton");
+
+
+        const clientData = {
+
+          name:
+            document
+              .getElementById("name")
+              .value
+              .trim(),
+
+          company:
+            document
+              .getElementById("company")
+              .value
+              .trim() || null,
+
+          email:
+            document
+              .getElementById("email")
+              .value
+              .trim() || null,
+
+          phone:
+            document
+              .getElementById("phone")
+              .value
+              .trim() || null,
+
+          status:
+            document
+              .getElementById("status")
+              .value,
+
+          next_follow_up:
+            document
+              .getElementById("next_follow_up")
+              .value || null,
+
+          notes:
+            document
+              .getElementById("notes")
+              .value
+              .trim() || null
+        };
+
+
+        if (!clientData.name) {
+
+          message.textContent =
+            "Client name is required.";
+
+          return;
+        }
+
+
+        saveButton.disabled = true;
+        message.textContent = "Saving...";
+
+
+        let result;
+
+
+        if (editingClientId) {
+
+          result =
+            await supabaseClient
+              .from("clients")
+              .update(clientData)
+              .eq("id", editingClientId);
+
+        } else {
+
+          result =
+            await supabaseClient
+              .from("clients")
+              .insert([clientData]);
+
+        }
+
+
+        saveButton.disabled = false;
+
+
+        if (result.error) {
+
+          console.error(result.error);
+
+          message.textContent =
+            "Error: " + result.error.message;
+
+          return;
+        }
+
+
+        message.textContent =
+          editingClientId
+            ? "Client updated successfully."
+            : "Client added successfully.";
+
+
+        resetForm();
+
+        await loadClients();
+      }
+    );
+
+
+  function editClient(id) {
+
+    const client =
+      clientsCache.find(
+        item => String(item.id) === String(id)
+      );
+
+
+    if (!client) {
+      return;
+    }
+
+
+    editingClientId = client.id;
+
+
+    document.getElementById("name").value =
+      client.name || "";
+
+    document.getElementById("company").value =
+      client.company || "";
+
+    document.getElementById("email").value =
+      client.email || "";
+
+    document.getElementById("phone").value =
+      client.phone || "";
+
+    document.getElementById("status").value =
+      client.status || "lead";
+
+    document.getElementById("next_follow_up").value =
+      client.next_follow_up || "";
+
+    document.getElementById("notes").value =
+      client.notes || "";
+
+
+    document.getElementById("formTitle").textContent =
+      "Edit Client";
+
+    document.getElementById("saveButton").textContent =
+      "Save Changes";
+
+    document.getElementById("cancelButton").style.display =
+      "inline-block";
+
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
+
+
+  async function deleteClient(id) {
+
+    const client =
+      clientsCache.find(
+        item => String(item.id) === String(id)
+      );
+
+
+    if (!client) {
+      return;
+    }
+
+
+    const confirmed =
+      confirm(
+        'Delete client "' +
+        (client.name || "") +
+        '"?'
+      );
+
+
+    if (!confirmed) {
+      return;
+    }
+
+
+    const { error } =
+      await supabaseClient
+        .from("clients")
+        .delete()
+        .eq("id", id);
+
+
+    if (error) {
+
+      alert(
+        "Could not delete client: " +
+        error.message
+      );
+
+      return;
+    }
+
+
+    if (
+      editingClientId &&
+      String(editingClientId) === String(id)
+    ) {
+      resetForm();
+    }
+
+
+    await loadClients();
+  }
+
+
+  function resetForm() {
+
+    editingClientId = null;
+
+    document
+      .getElementById("clientForm")
+      .reset();
+
+    document.getElementById("status").value =
+      "lead";
+
+    document.getElementById("formTitle").textContent =
+      "Add Client";
+
+    document.getElementById("saveButton").textContent =
+      "Add Client";
+
+    document.getElementById("cancelButton").style.display =
+      "none";
+  }
+
+
+  document
+    .getElementById("cancelButton")
+    .addEventListener(
+      "click",
+      function() {
+
+        resetForm();
+
+        document.getElementById("message").textContent =
+          "";
+      }
+    );
+
+
+  async function startPage() {
+
+    const isAdmin =
+      await checkAdmin();
+
+    if (!isAdmin) {
+      return;
+    }
+
+    await loadClients();
+  }
+
+
+  startPage();
+</script>
+
+</body>
+</html>
