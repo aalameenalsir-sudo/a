@@ -1,101 +1,234 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>A Solution — Digital Advertising & Media Solutions</title>
-  <meta name="description" content="A Solution creates high-impact advertising experiences across digital screens, outdoor media, signage and brand campaigns.">
-  <link rel="icon" href="favicon.png" type="image/png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>A Solution — Marketing, Technology & Business Solutions</title>
+  <meta name="description" content="A Solution is a Riyadh-based integrated solutions company for digital marketing, advertising, websites, apps, IT systems, CCTV, events and business consulting." />
+  <meta name="theme-color" content="#0a0a0a" />
+  <link rel="canonical" href="https://alameensolution.site/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://alameensolution.site/" />
+  <meta property="og:title" content="A Solution — We Build. We Market. We Transform." />
+  <meta property="og:description" content="Marketing, technology, business systems, events and consulting — built as one connected solution." />
+  <meta property="og:image" content="https://alameensolution.site/a-solution-logo.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="A Solution — We Build. We Market. We Transform." />
+  <meta name="twitter:description" content="Integrated marketing, technology and business solutions from Riyadh." />
+  <meta name="twitter:image" content="https://alameensolution.site/a-solution-logo.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://images.unsplash.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500;6..96,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="noise"></div>
+  <div class="grain" aria-hidden="true"></div>
   <div class="cursor-dot" aria-hidden="true"></div>
-  <header class="site-header" id="top">
-    <a class="brand" href="#top" aria-label="A Solution home"><img src="a-solution-logo.png" alt="A Solution"></a>
-    <nav class="desktop-nav"><a href="#services">Services</a><a href="#work">Work</a><a href="#about">About</a><a href="#contact">Contact</a></nav>
-    <a class="pill magnetic" href="#contact">Start a project <span>↗</span></a>
+  <div class="cursor-ring" aria-hidden="true"></div>
+
+  <header class="site-header" data-header>
+    <a class="brand" href="#top" aria-label="A Solution home">
+      <img src="a-solution-logo.png" alt="A Solution" width="170" height="54" />
+    </a>
+    <nav class="desktop-nav" aria-label="Primary navigation">
+      <a href="#services">Services</a>
+      <a href="#work">Work</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <a class="nav-cta magnetic" href="#contact"><span>Start a project</span><b>↗</b></a>
+    <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" data-menu-toggle>
+      <span></span><span></span>
+    </button>
   </header>
 
-  <main>
-    <section class="hero motion-hero" data-cinematic-hero>
-      <div class="orb orb-one"></div><div class="orb orb-two"></div>
-      <div class="hero-grid">
-        <div class="hero-copy reveal">
-          <p class="eyebrow" id="heroKicker">DIGITAL ADVERTISING & MEDIA SOLUTIONS</p>
-          <h1 id="heroTitle">We make brands <span>impossible</span> to ignore.</h1>
-          <p class="hero-description" id="heroDescription">A Solution builds premium advertising experiences across screens, streets and digital platforms.</p>
-          <div class="hero-actions"><a id="primaryCta" class="btn-primary magnetic" href="#contact">Start a project <span>↗</span></a><a id="secondaryCta" class="btn-ghost" href="#work">Explore our work <span>↓</span></a></div>
-        </div>
-        <div class="hero-stage" aria-hidden="true">
-          <div class="stage-ring ring-a"></div><div class="stage-ring ring-b"></div><div class="stage-card card-a"><img src="a-solution-elevator-mockup.png" alt=""></div><div class="stage-card card-b"><img src="a-solution-billboard-mockup.png" alt=""></div><div class="stage-mark">A<span>.</span></div>
+  <div class="mobile-menu" data-mobile-menu>
+    <a href="#services">Services</a>
+    <a href="#work">Work</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </div>
+
+  <main id="top">
+    <section class="hero section-shell">
+      <div class="hero-copy reveal">
+        <p class="eyebrow"><i></i> Riyadh · Saudi Arabia</p>
+        <h1>We build.<br><em>We market.</em><br>We transform.</h1>
+        <p class="hero-intro">One partner for brands that want to move faster — from marketing and technology to business systems, events and strategy.</p>
+        <div class="hero-actions">
+          <a class="button button-light magnetic" href="#services">Explore our world <span>↘</span></a>
+          <a class="text-link" href="#contact">Tell us what you need <span>↗</span></a>
         </div>
       </div>
-      <div class="scroll-hint"><span>Scroll to explore</span><i></i></div>
+
+      <div class="hero-stage" data-parallax="0.06">
+        <figure class="hero-image hero-image-main" data-tilt>
+          <img src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1800&q=88" alt="Premium contemporary office environment" fetchpriority="high" />
+        </figure>
+        <figure class="hero-image hero-image-float" data-tilt>
+          <img src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1000&q=88" alt="Modern creative workspace" fetchpriority="high" />
+        </figure>
+        <div class="orbit-label"><span>A</span><small>Ideas into<br>impact.</small></div>
+        <div class="hero-index"><span>01</span><span>/</span><span>07</span></div>
+      </div>
+
+      <div class="hero-scroll"><span>SCROLL TO DISCOVER</span><i></i></div>
     </section>
 
-    <section class="marquee kinetic-marquee" aria-hidden="true"><div class="marquee-track"><span>ADVERTISING</span><b>✦</b><span>MEDIA</span><b>✦</b><span>CREATIVE</span><b>✦</b><span>DIGITAL</span><b>✦</b><span>ADVERTISING</span><b>✦</b><span>MEDIA</span><b>✦</b><span>CREATIVE</span><b>✦</b><span>DIGITAL</span></div></section>
-
-    <section class="section services services-stage" id="services">
-      <div class="section-head reveal"><p class="eyebrow">WHAT WE DO</p><h2>Media that moves<br><span>with people.</span></h2></div>
-      <div class="service-list" id="serviceList"></div>
-    </section>
-
-    <section class="section work work-showcase" id="work">
-      <div class="section-head reveal"><p class="eyebrow">SELECTED WORK</p><h2>Built to be seen.<br><span>Designed to stay.</span></h2></div>
-      <div class="project-stack" id="projectStack">
-        <article class="project-card reveal" data-fallback><div class="project-image"><img src="a-solution-billboard-mockup.png" alt="Outdoor billboard advertising"></div><div class="project-meta"><span>01 / Outdoor</span><h3>City-scale presence</h3></div></article>
-        <article class="project-card reveal" data-fallback><div class="project-image"><img src="a-solution-elevator-mockup.png" alt="Elevator screen media"></div><div class="project-meta"><span>02 / Indoor Media</span><h3>Attention where people pause</h3></div></article>
-        <article class="project-card reveal" data-fallback><div class="project-image"><img src="a-solution-signage-mockup.png" alt="Digital signage"></div><div class="project-meta"><span>03 / Signage</span><h3>Spaces turned into media</h3></div></article>
+    <section class="statement section-shell" id="about">
+      <p class="eyebrow reveal"><i></i> What A Solution is</p>
+      <div class="statement-grid">
+        <h2 class="display-line reveal">Not an agency.<br><em>A growth partner.</em></h2>
+        <div class="statement-copy reveal">
+          <p>We connect creative thinking, technology and business know-how in one place. That means fewer hand-offs, clearer decisions and solutions that actually work together.</p>
+          <p class="muted">Strategy first. Execution second. Measurable impact always.</p>
+        </div>
       </div>
     </section>
 
-    <section class="metrics" id="metrics"><div class="metric-grid" id="metricGrid"></div></section>
+    <section class="services section-shell" id="services">
+      <div class="section-head reveal">
+        <p class="eyebrow"><i></i> Capabilities</p>
+        <h2>Everything your business<br><em>needs to move.</em></h2>
+      </div>
 
-    <section class="section about" id="about">
-      <div class="about-grid"><p class="eyebrow reveal">ABOUT A SOLUTION</p><div><h2 class="reveal" id="aboutTitle">Built for attention. Designed for impact.</h2><p class="about-copy reveal" id="aboutText">From strategy and creative to media placement and digital experiences, A Solution turns ideas into campaigns people notice and remember.</p><div class="capability-cloud reveal"><span>Strategy</span><span>Creative Direction</span><span>OOH</span><span>Digital Screens</span><span>Branding</span><span>Motion</span><span>Campaigns</span></div></div></div>
+      <div class="service-stack">
+        <article class="service-card reveal" data-service="01">
+          <div class="service-number">01</div>
+          <div class="service-title"><h3>Marketing<br>& Advertising</h3><p>Digital marketing, campaigns, content, branding, media buying and advertising solutions.</p></div>
+          <figure><img loading="lazy" src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1400&q=86" alt="Marketing strategy meeting" /></figure>
+          <span class="service-arrow">↗</span>
+        </article>
+
+        <article class="service-card reveal" data-service="02">
+          <div class="service-number">02</div>
+          <div class="service-title"><h3>Web & App<br>Development</h3><p>High-end websites, business platforms, mobile apps and custom digital products.</p></div>
+          <figure><img loading="lazy" src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1400&q=86" alt="Software development team" /></figure>
+          <span class="service-arrow">↗</span>
+        </article>
+
+        <article class="service-card reveal" data-service="03">
+          <div class="service-number">03</div>
+          <div class="service-title"><h3>Systems<br>& Security</h3><p>Business systems, IT solutions, CCTV, surveillance and connected operational technology.</p></div>
+          <figure><img loading="lazy" src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1400&q=86" alt="Modern technology workspace" /></figure>
+          <span class="service-arrow">↗</span>
+        </article>
+
+        <article class="service-card reveal" data-service="04">
+          <div class="service-number">04</div>
+          <div class="service-title"><h3>Business<br>Solutions</h3><p>Company organization, workflows, operating systems, meeting structures and process improvement.</p></div>
+          <figure><img loading="lazy" src="https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1400&q=86" alt="Business operations team" /></figure>
+          <span class="service-arrow">↗</span>
+        </article>
+
+        <article class="service-card reveal" data-service="05">
+          <div class="service-number">05</div>
+          <div class="service-title"><h3>Events<br>& Experiences</h3><p>Corporate meetings, celebrations, events, seminars, conferences and memorable experiences.</p></div>
+          <figure><img loading="lazy" src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1400&q=86" alt="Premium corporate event" /></figure>
+          <span class="service-arrow">↗</span>
+        </article>
+
+        <article class="service-card reveal" data-service="06">
+          <div class="service-number">06</div>
+          <div class="service-title"><h3>Business &<br>Management Consulting</h3><p>Business strategy, management consulting and practical guidance for smarter growth.</p></div>
+          <figure><img loading="lazy" src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1400&q=86" alt="Executive business consulting" /></figure>
+          <span class="service-arrow">↗</span>
+        </article>
+
+        <article class="service-card reveal" data-service="07">
+          <div class="service-number">07</div>
+          <div class="service-title"><h3>Media<br>Solutions</h3><p>Digital signage, outdoor billboards, elevator screens and place-based advertising media.</p></div>
+          <figure><img loading="lazy" src="https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&w=1400&q=86" alt="Large-scale media experience" /></figure>
+          <span class="service-arrow">↗</span>
+        </article>
+      </div>
     </section>
 
-    <section class="brand-film reveal"><div class="film-image"><img src="a-solution-social-cover.png" alt="A Solution brand experience"></div><div class="film-overlay"><p>From the first glance</p><h2>to the lasting impression.</h2></div></section>
+    <section class="marquee" aria-label="A Solution capabilities">
+      <div class="marquee-track">
+        <span>Strategy</span><b>✦</b><em>Creative</em><b>✦</b><span>Technology</span><b>✦</b><em>Growth</em><b>✦</b><span>Experiences</span><b>✦</b>
+        <span>Strategy</span><b>✦</b><em>Creative</em><b>✦</b><span>Technology</span><b>✦</b><em>Growth</em><b>✦</b><span>Experiences</span><b>✦</b>
+      </div>
+    </section>
 
-    <section class="section contact contact-finale" id="contact">
-      <div class="contact-card reveal"><p class="eyebrow">LET'S MAKE SOMETHING UNMISSABLE</p><h2>Have a project in mind?</h2><p>Tell us what you want people to see, feel and remember.</p><form id="contactForm" class="contact-form"><div class="form-row"><input name="name" placeholder="Your name" required><input name="company" placeholder="Company"></div><div class="form-row"><input name="email" type="email" placeholder="Email"><input name="phone" placeholder="Phone"></div><input name="subject" placeholder="Project / campaign"><textarea name="message" placeholder="Tell us about the project" required></textarea><button class="btn-primary magnetic" type="submit">Send inquiry <span>↗</span></button><div id="formStatus" class="form-status"></div></form></div>
-      <div class="contact-details reveal"><img src="a-solution-logo.png" alt="A Solution"><div><a id="siteEmailLink" href="#"><span>Email</span><b id="siteEmailText">—</b></a><a id="siteWhatsappLink" href="#" target="_blank" rel="noreferrer"><span>WhatsApp</span><b id="sitePhoneText">—</b></a><div><span>Based in</span><b id="siteLocationText">Riyadh, KSA</b></div></div><div class="socials"><a id="instagramLink" href="#" target="_blank">Instagram</a><a id="xLink" href="#" target="_blank">X</a><a id="linkedinLink" href="#" target="_blank">LinkedIn</a><a id="tiktokLink" href="#" target="_blank">TikTok</a><a id="snapchatLink" href="#" target="_blank">Snapchat</a></div></div>
+    <section class="work section-shell" id="work">
+      <div class="section-head work-head reveal">
+        <p class="eyebrow"><i></i> Selected directions</p>
+        <h2>Built to be seen.<br><em>Designed to stay.</em></h2>
+      </div>
+
+      <div class="work-grid" data-projects>
+        <article class="work-item work-wide reveal">
+          <figure><img loading="lazy" src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1800&q=88" alt="Brand environment" /></figure>
+          <div><span>Brand Experience</span><h3>Spaces that communicate before anyone says a word.</h3><b>01</b></div>
+        </article>
+        <article class="work-item reveal">
+          <figure><img loading="lazy" src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1400&q=88" alt="Digital product team" /></figure>
+          <div><span>Digital Products</span><h3>Useful technology with a point of view.</h3><b>02</b></div>
+        </article>
+        <article class="work-item reveal">
+          <figure><img loading="lazy" src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1400&q=88" alt="Live event production" /></figure>
+          <div><span>Events</span><h3>Moments people remember.</h3><b>03</b></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="numbers section-shell reveal">
+      <div class="numbers-intro"><p class="eyebrow"><i></i> One connected partner</p><h2>From the first idea<br>to the <em>final detail.</em></h2></div>
+      <div class="numbers-list">
+        <div><strong data-count="7">0</strong><span>Core solution<br>categories</span></div>
+        <div><strong data-count="360">0</strong><span>Degree business<br>thinking</span></div>
+        <div><strong data-count="1">0</strong><span>Partner across<br>your journey</span></div>
+      </div>
+    </section>
+
+    <section class="contact section-shell" id="contact">
+      <div class="contact-visual reveal">
+        <img loading="lazy" src="https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&w=1800&q=88" alt="Professional business meeting" />
+        <div class="contact-stamp">LET'S<br>MAKE<br>IT HAPPEN.</div>
+      </div>
+
+      <div class="contact-panel reveal">
+        <p class="eyebrow"><i></i> Start a conversation</p>
+        <h2>Have a challenge?<br><em>Bring it.</em></h2>
+        <p class="contact-lead">Tell us what you are trying to achieve. We will help you shape the right solution.</p>
+        <form id="contactForm" novalidate>
+          <label><span>Your name</span><input name="name" type="text" autocomplete="name" required placeholder="Name" /></label>
+          <label><span>Business email</span><input name="email" type="email" autocomplete="email" required placeholder="you@company.com" /></label>
+          <label><span>Phone</span><input name="phone" type="tel" autocomplete="tel" placeholder="+966" /></label>
+          <label><span>What can we solve?</span><textarea name="message" rows="4" required placeholder="Tell us about the project"></textarea></label>
+          <button class="button button-light magnetic" type="submit"><span>Send inquiry</span><b>↗</b></button>
+          <p class="form-status" aria-live="polite"></p>
+        </form>
+      </div>
     </section>
   </main>
 
-  <footer><span>© 2026 A Solution</span><span>Digital Advertising & Media Solutions</span><a href="#top">Back to top ↑</a></footer>
+  <footer class="footer section-shell">
+    <div class="footer-brand"><img src="a-solution-logo.png" alt="A Solution" width="190" height="60" /><p>Marketing · Technology · Business Solutions</p></div>
+    <div class="footer-links">
+      <a href="mailto:info@asolution.sa" data-setting-email>info@asolution.sa</a>
+      <a href="tel:+966570909656" data-setting-phone>+966 57 090 9656</a>
+      <span data-setting-location>Riyadh, KSA</span>
+    </div>
+    <div class="footer-social">
+      <a href="#" data-social="instagram" aria-label="Instagram">IG</a>
+      <a href="#" data-social="linkedin" aria-label="LinkedIn">IN</a>
+      <a href="#" data-social="x_url" aria-label="X">X</a>
+      <a href="#" data-social="tiktok" aria-label="TikTok">TT</a>
+    </div>
+    <div class="footer-bottom"><span>© <span id="year"></span> A Solution. All rights reserved.</span><a href="#top">Back to top ↑</a></div>
+  </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const websiteSupabase = window.supabase.createClient('https://bgxtcpcbkjftkgswpizr.supabase.co','sb_publishable_t9MKvlsLheyCj-o-jIQ04A_9sGI_j_r');
-    window.websiteSupabase = websiteSupabase;
-    async function loadWebsiteProjects(){
-      const {data}=await websiteSupabase.from('projects').select('*').eq('is_published',true).order('created_at',{ascending:false});
-      window.ASolutionSite?.renderProjects(data||[]);
-    }
-    async function loadWebsiteSettings(){
-      const [{data:ws},{data:settings}] = await Promise.all([
-        websiteSupabase.from('website_settings').select('*').eq('id',1).maybeSingle(),
-        websiteSupabase.from('settings').select('*').limit(1).maybeSingle()
-      ]);
-      window.ASolutionSite?.applyWebsiteSettings(ws||{});
-      window.ASolutionSite?.applyContactSettings(settings||{});
-    }
-    async function bootstrapWebsite(){
-      const [{data:ws},{data:settings},{data:projects}] = await Promise.all([
-        websiteSupabase.from('website_settings').select('*').eq('id',1).maybeSingle(),
-        websiteSupabase.from('settings').select('*').limit(1).maybeSingle(),
-        websiteSupabase.from('projects').select('*').eq('is_published',true).order('created_at',{ascending:false})
-      ]);
-      window.ASolutionSite?.applyWebsiteSettings(ws||{});
-      window.ASolutionSite?.applyContactSettings(settings||{});
-      window.ASolutionSite?.renderProjects(projects||[]);
-    }
-    window.addEventListener('DOMContentLoaded',bootstrapWebsite);
+    window.ASOLUTION_SUPABASE = {
+      url: "https://bgxtcpcbkjftkgswpizr.supabase.co",
+      key: "sb_publishable_t9MKvlsLheyCj-o-jIQ04A_9sGI_j_r"
+    };
   </script>
   <script src="script.js"></script>
 </body>

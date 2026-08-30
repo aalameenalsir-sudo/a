@@ -1,17 +1,102 @@
-(()=>{
-  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-  const defaults={services:[{title:'Elevator Media',text:'High-frequency digital screens inside residential and commercial towers.'},{title:'Outdoor Advertising',text:'Billboards and digital OOH placements in high-impact locations.'},{title:'Digital Signage',text:'Immersive screen experiences for malls, retail and destinations.'},{title:'Brand & Creative',text:'Identity, campaigns, motion and content built to move.'}],metrics:[{value:'500+',label:'Active screens'},{value:'120+',label:'Brand partners'},{value:'50+',label:'Cities covered'},{value:'24/7',label:'Campaign support'}]};
-  const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-  const safeUrl=v=>{try{const u=new URL(v,location.href);return ['http:','https:'].includes(u.protocol)?u.href:'#'}catch{return '#'}};
-  function renderServices(list=defaults.services){$('#serviceList').innerHTML=(Array.isArray(list)?list:defaults.services).map((s,i)=>`<article class="service-item reveal"><span class="service-index">0${i+1}</span><h3>${esc(s.title)}</h3><p>${esc(s.text)}</p><span class="service-arrow">↗</span></article>`).join('');observeReveals()}
-  function renderMetrics(list=defaults.metrics){$('#metricGrid').innerHTML=(Array.isArray(list)?list:defaults.metrics).map(x=>`<div class="metric reveal"><b>${esc(x.value)}</b><span>${esc(x.label)}</span></div>`).join('');observeReveals()}
-  function applyWebsiteSettings(s){if(!s||!Object.keys(s).length){renderServices();renderMetrics();return}document.documentElement.style.setProperty('--accent',s.accent_color||'#ff6b6b');document.documentElement.style.setProperty('--bg',s.background_color||'#08090b');document.documentElement.style.setProperty('--surface',s.surface_color||'#111318');document.documentElement.style.setProperty('--text',s.text_color||'#f5f5f0');$('#heroKicker').textContent=s.hero_kicker||'';$('#heroTitle').textContent=s.hero_title||'';$('#heroDescription').textContent=s.hero_description||'';$('#primaryCta').childNodes[0].nodeValue=(s.primary_cta_label||'Start a project')+' ';$('#primaryCta').href=s.primary_cta_link||'#contact';$('#secondaryCta').childNodes[0].nodeValue=(s.secondary_cta_label||'Explore our work')+' ';$('#secondaryCta').href=s.secondary_cta_link||'#work';$('#aboutTitle').textContent=s.about_title||'';$('#aboutText').textContent=s.about_text||'';renderServices(s.services);renderMetrics(s.metrics);document.querySelector('#services').hidden=s.show_services===false;document.querySelector('#work').hidden=s.show_projects===false;document.querySelector('#about').hidden=s.show_about===false;document.querySelector('#contact').hidden=s.show_contact===false}
-  function setSocial(id,url){const el=$(id);if(!el)return;if(url){el.href=safeUrl(url);el.style.display='inline'}else el.style.display='none'}
-  function applyContactSettings(s){if(!s)return;const email=s.email||'';$('#siteEmailText').textContent=email||'—';$('#siteEmailLink').href=email?`mailto:${email}`:'#';$('#sitePhoneText').textContent=s.phone||s.whatsapp||'—';const wa=(s.whatsapp||s.phone||'').replace(/\D/g,'');$('#siteWhatsappLink').href=wa?`https://wa.me/${wa}`:'#';$('#siteLocationText').textContent=s.location||'Riyadh, KSA';setSocial('#instagramLink',s.instagram);setSocial('#xLink',s.x_url);setSocial('#linkedinLink',s.linkedin);setSocial('#tiktokLink',s.tiktok);setSocial('#snapchatLink',s.snapchat)}
-  function renderProjects(projects){if(!projects?.length)return;const stack=$('#projectStack');stack.innerHTML=projects.map((p,i)=>`<article class="project-card reveal"><div class="project-image"><img src="${esc(p.image_url||'a-solution-billboard-mockup.png')}" alt="${esc(p.title||'A Solution project')}" loading="lazy"></div><div class="project-meta"><span>${String(i+1).padStart(2,'0')} / Project</span><h3>${esc(p.title||'Untitled project')}</h3></div></article>`).join('');observeReveals()}
-  let observer;function observeReveals(){observer?.disconnect();observer=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('is-visible')}),{threshold:.12});$$('.reveal').forEach(el=>observer.observe(el))}
-  function motion(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const hero=$('.hero-stage');window.addEventListener('mousemove',e=>{const x=(e.clientX/innerWidth-.5),y=(e.clientY/innerHeight-.5);if(hero)hero.style.transform=`translate3d(${x*16}px,${y*16}px,0) rotateX(${-y*2}deg) rotateY(${x*2}deg)`},{passive:true});const c=$('.cursor-dot');window.addEventListener('mousemove',e=>{c.style.left=e.clientX+'px';c.style.top=e.clientY+'px'},{passive:true});$$('a,button').forEach(el=>{el.addEventListener('mouseenter',()=>c.classList.add('active'));el.addEventListener('mouseleave',()=>c.classList.remove('active'))});window.addEventListener('scroll',()=>{const y=scrollY;$$('.stage-card').forEach((el,i)=>el.style.translate=`0 ${y*(i?-.035:.04)}px`)},{passive:true})}
-  async function submitContact(e){e.preventDefault();const form=e.currentTarget,status=$('#formStatus');status.textContent='Sending…';const o=Object.fromEntries(new FormData(form));const {error}=await window.websiteSupabase.from('messages').insert({name:o.name,email:o.email||null,phone:o.phone||null,company:o.company||null,subject:o.subject||null,message:o.message,status:'new'});if(error){status.textContent='Could not send. Please try again.';return}form.reset();status.textContent='Sent. We’ll get back to you soon.'}
-  window.ASolutionSite={applyWebsiteSettings,applyContactSettings,renderProjects};
-  document.addEventListener('DOMContentLoaded',()=>{renderServices();renderMetrics();observeReveals();motion();$('#contactForm')?.addEventListener('submit',submitContact)});
+(() => {
+  const $ = (s, p = document) => p.querySelector(s);
+  const $$ = (s, p = document) => [...p.querySelectorAll(s)];
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  $('#year').textContent = new Date().getFullYear();
+
+  // Header
+  const header = $('[data-header]');
+  const syncHeader = () => header.classList.toggle('scrolled', scrollY > 25);
+  syncHeader(); addEventListener('scroll', syncHeader, { passive: true });
+
+  // Mobile menu
+  const toggle = $('[data-menu-toggle]');
+  const menu = $('[data-mobile-menu]');
+  toggle?.addEventListener('click', () => {
+    const open = menu.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', String(open));
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+  $$('[data-mobile-menu] a').forEach(a => a.addEventListener('click', () => {
+    menu.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); document.body.style.overflow='';
+  }));
+
+  // Reveal on scroll
+  const observer = new IntersectionObserver(entries => entries.forEach(entry => {
+    if (entry.isIntersecting) { entry.target.classList.add('in'); observer.unobserve(entry.target); }
+  }), { threshold: .12, rootMargin: '0px 0px -7% 0px' });
+  $$('.reveal').forEach(el => observer.observe(el));
+
+  // Count up
+  const countObserver = new IntersectionObserver(entries => entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const el = entry.target, target = Number(el.dataset.count || 0), start = performance.now();
+    const tick = now => { const p = Math.min(1,(now-start)/1100), eased=1-Math.pow(1-p,3); el.textContent=Math.round(target*eased)+(target===360?'°':''); if(p<1) requestAnimationFrame(tick); };
+    requestAnimationFrame(tick); countObserver.unobserve(el);
+  }), { threshold:.5 });
+  $$('[data-count]').forEach(el => countObserver.observe(el));
+
+  if (!reduced) {
+    // Parallax
+    let ticking = false;
+    addEventListener('scroll', () => { if (ticking) return; ticking=true; requestAnimationFrame(() => {
+      $$('[data-parallax]').forEach(el => { const speed=Number(el.dataset.parallax||.05); const r=el.getBoundingClientRect(); const center=r.top+r.height/2-innerHeight/2; el.style.transform=`translate3d(0,${center*-speed}px,0)`; }); ticking=false;
+    }); }, {passive:true});
+
+    // 3D tilt with subtle motion
+    $$('[data-tilt]').forEach(el => {
+      el.addEventListener('pointermove', e => { const r=el.getBoundingClientRect(), x=(e.clientX-r.left)/r.width-.5, y=(e.clientY-r.top)/r.height-.5; el.style.transform=`perspective(900px) rotateX(${y*-3}deg) rotateY(${x*4}deg) scale(1.01)`; });
+      el.addEventListener('pointerleave', () => el.style.transform='');
+    });
+
+    // Custom cursor
+    const dot=$('.cursor-dot'), ring=$('.cursor-ring');
+    addEventListener('pointermove', e => { if(!dot||!ring)return; dot.style.transform=`translate(${e.clientX-2.5}px,${e.clientY-2.5}px)`; ring.animate({transform:`translate(${e.clientX-17}px,${e.clientY-17}px)`},{duration:220,fill:'forwards'}); });
+    $$('a,button,[data-tilt]').forEach(el => { el.addEventListener('pointerenter',()=>ring?.classList.add('active')); el.addEventListener('pointerleave',()=>ring?.classList.remove('active')); });
+
+    // Magnetic buttons
+    $$('.magnetic').forEach(el => { el.addEventListener('pointermove', e => { const r=el.getBoundingClientRect(); el.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.08}px,${(e.clientY-r.top-r.height/2)*.12}px)`; }); el.addEventListener('pointerleave',()=>el.style.transform=''); });
+  }
+
+  // Optional Supabase integration. Keep current project values in window.ASOLUTION_SUPABASE.
+  const config = window.ASOLUTION_SUPABASE;
+  let db = null;
+  if (config?.url && config?.key && window.supabase) db = window.supabase.createClient(config.url, config.key);
+
+  const loadSettings = async () => {
+    if (!db) return;
+    try {
+      const { data, error } = await db.from('settings').select('*').limit(1).maybeSingle();
+      if (error || !data) return;
+      const email = $('[data-setting-email]'), phone=$('[data-setting-phone]'), location=$('[data-setting-location]');
+      if(data.email && email){email.textContent=data.email;email.href=`mailto:${data.email}`}
+      if(data.phone && phone){phone.textContent=data.phone;phone.href=`tel:${String(data.phone).replace(/\s+/g,'')}`}
+      if(data.location && location)location.textContent=data.location;
+      ['instagram','linkedin','x_url','tiktok'].forEach(k=>{const a=$(`[data-social="${k}"]`);if(a&&data[k]){a.href=data[k];a.target='_blank';a.rel='noopener'}});
+    } catch (_) {}
+  };
+  loadSettings();
+
+  // Contact form: sends to Supabase when configured; otherwise opens email fallback.
+  const form=$('#contactForm'), status=$('.form-status');
+  form?.addEventListener('submit', async e => {
+    e.preventDefault();
+    if(!form.reportValidity()) return;
+    const values=Object.fromEntries(new FormData(form).entries());
+    const btn=$('button[type="submit"]',form); btn.disabled=true; status.textContent='Sending…';
+    try {
+      if(db){
+        const { error }=await db.from('messages').insert({name:values.name,email:values.email,phone:values.phone||null,message:values.message});
+        if(error) throw error;
+        status.textContent='Thank you. We’ll be in touch shortly.'; form.reset();
+      } else {
+        const subject=encodeURIComponent(`New inquiry from ${values.name}`);
+        const body=encodeURIComponent(`Name: ${values.name}\nEmail: ${values.email}\nPhone: ${values.phone||'-'}\n\n${values.message}`);
+        location.href=`mailto:info@asolution.sa?subject=${subject}&body=${body}`;
+        status.textContent='Your email app is opening…';
+      }
+    } catch(err){status.textContent='Could not send right now. Please email info@asolution.sa.'}
+    finally{btn.disabled=false}
+  });
 })();
