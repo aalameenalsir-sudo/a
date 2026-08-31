@@ -1,79 +1,347 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>A Solution — Admin V4</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<!-- Keep the private admin panel out of search engines -->
+<meta name="robots" content="noindex,nofollow,noarchive">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
 <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
 <link rel="stylesheet" href="admin.css">
 </head>
+
 <body>
+
 <div id="toast" class="toast" aria-live="polite"></div>
+
 <section id="login-screen" class="login-screen">
   <form id="login-form" class="login-card">
+
     <img src="../a-solution-logo.png" alt="A Solution">
-    <p class="eyebrow">ADMIN V4</p><h1>Website Control</h1>
+
+    <p class="eyebrow">ADMIN V4</p>
+    <h1>Website Control</h1>
+
     <p>Manage the bilingual A Solution website without touching GitHub.</p>
-    <label>Email<input id="login-email" type="email" autocomplete="username" required></label>
-    <label>Password<input id="login-password" type="password" autocomplete="current-password" required></label>
-    <button type="submit">Sign in</button><small id="login-status"></small>
+
+    <label>
+      Email
+      <input id="login-email" type="email" autocomplete="username" required>
+    </label>
+
+    <label>
+      Password
+      <input id="login-password" type="password" autocomplete="current-password" required>
+    </label>
+
+    <button type="submit">Sign in</button>
+
+    <small id="login-status"></small>
+
   </form>
 </section>
+
+
 <div id="app" class="app" hidden>
+
   <aside class="sidebar">
-    <a class="admin-logo" href="../" target="_blank"><img src="../a-solution-logo.png" alt="A Solution"></a>
+
+    <a class="admin-logo" href="../" target="_blank">
+      <img src="../a-solution-logo.png" alt="A Solution">
+    </a>
+
     <p>ADMIN V4</p>
+
     <nav>
-      <button class="nav-btn active" data-target="dashboard">Overview</button>
-      <button class="nav-btn" data-target="content">Website Content</button>
-      <button class="nav-btn" data-target="services">Services</button>
-      <button class="nav-btn" data-target="projects">Projects</button>
-      <button class="nav-btn" data-target="settings">Contact & Social</button>
-      <button class="nav-btn" data-target="seo">SEO</button>
-      <button class="nav-btn" data-target="messages">Messages <b id="message-badge"></b></button>
+
+      <button class="nav-btn active" data-target="dashboard">
+        Overview
+      </button>
+
+      <button class="nav-btn" data-target="content">
+        Website Content
+      </button>
+
+      <button class="nav-btn" data-target="services">
+        Services
+      </button>
+
+      <button class="nav-btn" data-target="projects">
+        Projects
+      </button>
+
+      <button class="nav-btn" data-target="settings">
+        Contact & Social
+      </button>
+
+      <button class="nav-btn" data-target="seo">
+        SEO
+      </button>
+
+      <button class="nav-btn" data-target="messages">
+        Messages <b id="message-badge"></b>
+      </button>
+
     </nav>
-    <div class="sidebar-foot"><span id="admin-email"></span><button id="logout-btn">Sign out</button></div>
+
+    <div class="sidebar-foot">
+      <span id="admin-email"></span>
+      <button id="logout-btn">Sign out</button>
+    </div>
+
   </aside>
+
+
   <main class="workspace">
-    <header class="workspace-head"><div><small>A SOLUTION</small><h1 id="view-title">Overview</h1></div><a href="../" target="_blank">View website ↗</a></header>
+
+    <header class="workspace-head">
+
+      <div>
+        <small>A SOLUTION</small>
+        <h1 id="view-title">Overview</h1>
+      </div>
+
+      <a href="../" target="_blank">View website ↗</a>
+
+    </header>
+
+
+    <!-- Dashboard -->
 
     <section class="view active" data-view="dashboard">
-      <div class="stats"><article><span>New messages</span><b id="stat-messages">—</b></article><article><span>Published projects</span><b id="stat-projects">—</b></article><article><span>Services live</span><b id="stat-services">—</b></article><article><span>Languages</span><b>EN / AR</b></article></div>
-      <div class="panel"><h2>Full website control</h2><p>Content changes save to Supabase and appear on the live website automatically. The visual system, logo and cinematic motion stay protected.</p></div>
+
+      <div class="stats">
+
+        <article>
+          <span>New messages</span>
+          <b id="stat-messages">—</b>
+        </article>
+
+        <article>
+          <span>Published projects</span>
+          <b id="stat-projects">—</b>
+        </article>
+
+        <article>
+          <span>Services live</span>
+          <b id="stat-services">—</b>
+        </article>
+
+        <article>
+          <span>Languages</span>
+          <b>EN / AR</b>
+        </article>
+
+      </div>
+
+      <div class="panel">
+
+        <h2>Full website control</h2>
+
+        <p>
+          Content changes save to Supabase and appear on the live website automatically.
+          The visual system, logo and cinematic motion stay protected.
+        </p>
+
+      </div>
+
     </section>
+
+
+    <!-- Website Content -->
 
     <section class="view" data-view="content">
+
       <div class="panel">
-        <div class="panel-head"><div><small>BILINGUAL</small><h2>Website Content</h2></div><button class="primary" id="save-content">Save content</button></div>
-        <div class="lang-tabs"><button class="lang-tab active" data-lang="en">English</button><button class="lang-tab" data-lang="ar">العربية</button></div>
+
+        <div class="panel-head">
+
+          <div>
+            <small>BILINGUAL</small>
+            <h2>Website Content</h2>
+          </div>
+
+          <button class="primary" id="save-content">
+            Save content
+          </button>
+
+        </div>
+
+
+        <div class="lang-tabs">
+
+          <button class="lang-tab active" data-lang="en">
+            English
+          </button>
+
+          <button class="lang-tab" data-lang="ar">
+            العربية
+          </button>
+
+        </div>
+
+
         <div id="content-editor"></div>
+
       </div>
+
     </section>
+
+
+    <!-- Services -->
 
     <section class="view" data-view="services">
-      <div class="panel"><div class="panel-head"><div><small>07 CAPABILITIES</small><h2>Services</h2></div><button class="primary" id="save-services">Save services</button></div><div id="services-editor"></div></div>
+
+      <div class="panel">
+
+        <div class="panel-head">
+
+          <div>
+            <small>07 CAPABILITIES</small>
+            <h2>Services</h2>
+          </div>
+
+          <button class="primary" id="save-services">
+            Save services
+          </button>
+
+        </div>
+
+        <div id="services-editor"></div>
+
+      </div>
+
     </section>
+
+
+    <!-- Projects -->
 
     <section class="view" data-view="projects">
-      <div class="panel"><div class="panel-head"><div><small>PORTFOLIO</small><h2>Projects</h2></div><button class="primary" id="new-project">+ New project</button></div><div id="projects-editor"></div></div>
+
+      <div class="panel">
+
+        <div class="panel-head">
+
+          <div>
+            <small>PORTFOLIO</small>
+            <h2>Projects</h2>
+          </div>
+
+          <button class="primary" id="new-project">
+            + New project
+          </button>
+
+        </div>
+
+        <div id="projects-editor"></div>
+
+      </div>
+
     </section>
+
+
+    <!-- Settings -->
 
     <section class="view" data-view="settings">
+
       <form id="settings-form" class="panel">
-        <div class="panel-head"><div><small>GLOBAL</small><h2>Contact & Social</h2></div><button class="primary" type="submit">Save settings</button></div>
+
+        <div class="panel-head">
+
+          <div>
+            <small>GLOBAL</small>
+            <h2>Contact & Social</h2>
+          </div>
+
+          <button class="primary" type="submit">
+            Save settings
+          </button>
+
+        </div>
+
         <div class="form-grid" id="settings-editor"></div>
+
       </form>
+
     </section>
+
+
+    <!-- SEO -->
 
     <section class="view" data-view="seo">
-      <div class="panel"><div class="panel-head"><div><small>SEARCH</small><h2>SEO</h2></div><button class="primary" id="save-seo">Save SEO</button></div><div id="seo-editor"></div><p class="note">SEO text updates live. Static sitemap/canonical URLs remain protected in the site files.</p></div>
+
+      <div class="panel">
+
+        <div class="panel-head">
+
+          <div>
+            <small>SEARCH</small>
+            <h2>SEO</h2>
+          </div>
+
+          <button class="primary" id="save-seo">
+            Save SEO
+          </button>
+
+        </div>
+
+        <div id="seo-editor"></div>
+
+        <p class="note">
+          SEO text updates live. Static sitemap/canonical URLs remain protected in the site files.
+        </p>
+
+      </div>
+
     </section>
 
+
+    <!-- Messages -->
+
     <section class="view" data-view="messages">
-      <div class="panel"><div class="panel-head"><div><small>INBOX</small><h2>Messages</h2></div><button id="refresh-messages">Refresh</button></div><div id="messages-list"></div></div>
+
+      <div class="panel">
+
+        <div class="panel-head">
+
+          <div>
+            <small>INBOX</small>
+            <h2>Messages</h2>
+          </div>
+
+          <button id="refresh-messages">
+            Refresh
+          </button>
+
+        </div>
+
+        <div id="messages-list"></div>
+
+      </div>
+
     </section>
+
   </main>
+
 </div>
-<script>window.ASOLUTION_SUPABASE={url:'https://bgxtcpcbkjftkgswpizr.supabase.co',key:'sb_publishable_t9MKvlsLheyCj-o-jIQ04A_9sGI_j_r'};</script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="admin.js"></script>
-</body></html>
+
+
+<script>
+window.ASOLUTION_SUPABASE = {
+  url: 'https://bgxtcpcbkjftkgswpizr.supabase.co',
+  key: 'sb_publishable_t9MKvlsLheyCj-o-jIQ04A_9sGI_j_r'
+};
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="admin.js"></script>
+
+</body>
+</html>
