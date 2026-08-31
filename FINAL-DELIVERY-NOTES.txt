@@ -1,0 +1,25 @@
+A SOLUTION COMMERCE — FINAL STOREFRONT DELIVERY
+Date: 2026-09-01
+
+WHAT CHANGED
+- Rebuilt the English and Arabic storefront home pages around the approved A Solution visual direction.
+- Added premium ivory / black / coral editorial layout, giant geometric A construction, grid lines and coral motion paths.
+- Added seven Shop by Solutions visual categories.
+- Added black Featured Solutions section with five priority offers.
+- Added Why A Solution Store section and final Let's Build CTA.
+- Added a full search/filter catalog beneath the premium presentation layer.
+- Added 13 local SVG artwork files for categories and products; no stock image/CDN dependency.
+- Updated product detail pages to use the same visual artwork system.
+- Kept cart, wishlist, checkout, account, tracking, reviews, Supabase hydration and admin functionality.
+- Preserved direct-file Windows opening through OPEN_STORE.bat and OPEN_STORE.html.
+
+VERIFICATION COMPLETED
+- Automated tests: 34 passed, 0 failed.
+- JavaScript syntax: 24 files checked successfully.
+- Local HTML href/src targets checked: 150, missing: 0.
+- SVG assets parsed as XML: 13/13.
+- Browser files checked for service-role markers: none found.
+- ZIP integrity checked after packaging.
+
+IMPORTANT DEPLOYMENT NOTE
+This package is the replacement build. It is not automatically pushed to GitHub by this ZIP. Deploy/upload it only after local visual review.

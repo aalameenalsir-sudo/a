@@ -1,0 +1,14 @@
+A SOLUTION COMMERCE — COMPLETE BUILD
+
+1) Double-click OPEN_STORE.bat on Windows.
+2) It opens http://localhost:5500/store/
+3) Test: search, Arabic/English, product page, wishlist, cart, checkout, account, tracking and reviews.
+
+BACKEND STATUS
+The commerce database and the order/tracking Edge Functions have already been deployed to the connected A Solution Supabase project.
+
+IMPORTANT
+Online card payment is intentionally not enabled until a real merchant provider and its credentials are supplied. Privileged keys must never be placed in browser files.
+
+GITHUB
+Automatic push was attempted but the connected GitHub integration still has read-only access (403). Use this package as the replacement source until write permission is granted.

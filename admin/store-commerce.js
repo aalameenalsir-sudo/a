@@ -1,0 +1,5 @@
+const orders=JSON.parse(localStorage.getItem("asolution_orders")||"[]");
+const money=n=>new Intl.NumberFormat("en-SA",{style:"currency",currency:"SAR",maximumFractionDigits:0}).format(n||0);
+const revenue=orders.reduce((s,o)=>s+(o.totals?.total||0),0);
+document.querySelector("#kpis").innerHTML=`<div class="kpi"><small>ORDERS</small><br><b>${orders.length}</b></div><div class="kpi"><small>REVENUE</small><br><b>${money(revenue)}</b></div><div class="kpi"><small>AVG. ORDER</small><br><b>${money(orders.length?revenue/orders.length:0)}</b></div><div class="kpi"><small>OPEN</small><br><b>${orders.filter(o=>o.status==="new").length}</b></div>`;
+const body=document.querySelector("#orders-body"); body.innerHTML=orders.length?orders.map(o=>`<tr><td>${o.reference}</td><td>${o.customer?.name||""}</td><td>${o.customer?.company||"—"}</td><td>${money(o.totals?.total)}</td><td><span class="badge">${o.status}</span></td><td>${new Date(o.created_at).toLocaleDateString()}</td></tr>`).join(""):`<tr><td colspan="6">No local demo orders yet.</td></tr>`;

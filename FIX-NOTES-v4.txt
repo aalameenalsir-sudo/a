@@ -1,0 +1,17 @@
+A Solution Commerce FINAL v4
+
+Launcher fix:
+- OPEN_STORE.bat no longer depends on Python, Node.js, localhost, or a local web server.
+- It opens the bundled store/index.html directly.
+- OPEN_STORE.html is included as a second zero-install launcher.
+
+Verification performed:
+- Node test suite: 22/22 passed.
+- JavaScript syntax check: all store/*.js and admin/*.js passed.
+- Local HTML reference audit: 28 HTML files checked, 0 missing local references.
+- No service-role key is present in browser bundle (covered by automated test).
+
+Start:
+1) Double-click OPEN_STORE.bat
+or
+2) Double-click OPEN_STORE.html

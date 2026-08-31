@@ -1,0 +1,1 @@
+The live project has active Edge Functions named `commerce-create-order` and `commerce-track-order`. The canonical behavior is documented in README-COMMERCE.md. Service-role and provider secrets are never included in this package.

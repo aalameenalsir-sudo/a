@@ -1,0 +1,8 @@
+(function(){
+const cfg={url:'https://bgxtcpcbkjftkgswpizr.supabase.co',key:'sb_publishable_t9MKvlsLheyCj-o-jIQ04A_9sGI_j_r'};
+function getToken(){try{const direct=JSON.parse(localStorage.getItem('asolution_supabase_session')||'null');if(direct?.access_token)return direct.access_token;for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i)||'';if(k.startsWith('sb-')&&k.endsWith('-auth-token')){const v=JSON.parse(localStorage.getItem(k)||'null');const s=v?.access_token?v:v?.currentSession||v?.session;if(s?.access_token)return s.access_token}}}catch{}return null}
+async function req(table,query='',opts={}){const token=getToken();if(!token)throw new Error('ADMIN_LOGIN_REQUIRED');const r=await fetch(`${cfg.url}/rest/v1/${table}${query}`,{...opts,headers:{apikey:cfg.key,Authorization:`Bearer ${token}`,'Content-Type':'application/json',...(opts.headers||{})}});const data=await r.json().catch(()=>null);if(!r.ok)throw new Error(data?.message||data?.error||`HTTP ${r.status}`);return data}
+async function role(){const token=getToken();if(!token)return false;const payload=JSON.parse(atob(token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));const rows=await req('profiles',`?id=eq.${payload.sub}&select=role`);return rows?.[0]?.role==='admin'}
+async function guard(){if(!(await role())){document.body.innerHTML='<main class="admin-main"><h1>Admin access required</h1><p>Open this page from the authenticated A Solution admin panel.</p></main>';throw new Error('ADMIN_FORBIDDEN')}}
+window.ASolutionAdmin={req,guard,getToken};
+})();

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 460" role="img" aria-label="A Solution MEDIA visual">
+<rect width="800" height="460" fill="#f2efe8"/>
+<path d="M0 74H800M0 386H800M82 0V460M718 0V460" stroke="#111" stroke-opacity=".12"/>
+<path d="M105 360C230 40 500 30 695 180" fill="none" stroke="#ff5a4e" stroke-width="2" stroke-dasharray="8 12" opacity=".85"/>
+<text x="54" y="72" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#111">A SOLUTION / MEDIA</text>
+<text x="54" y="418" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#111">07</text>
+<text x="610" y="405" font-family="Arial, sans-serif" font-size="170" font-weight="700" fill="none" stroke="#ff5a4e" stroke-width="2" opacity=".42">A</text>
+<rect x="255" y="95" width="320" height="250" rx="4" fill="#111"/><rect x="290" y="130" width="250" height="180" fill="#f2efe8"/><path d="M310 285L382 205L430 246L482 175L520 285Z" fill="#ff5a4e"/>
+</svg>

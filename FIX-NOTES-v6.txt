@@ -1,0 +1,13 @@
+A Solution Commerce FINAL v6
+
+Catalog resilience fix:
+- Local catalog renders before any Supabase request.
+- Corrupt or blocked localStorage can no longer stop storefront boot.
+- Cart rendering errors are isolated from catalog rendering.
+- Remote Supabase hydration is enhancement-only; local products remain the fallback.
+- Direct-file navigation fixes from v5 are retained.
+
+Verification performed before packaging:
+- Full Node test suite: 28/28 passed.
+- JavaScript syntax checks passed for store and admin scripts.
+- Local HTML href/src reference scan found zero missing files.

@@ -1,0 +1,5 @@
+A Solution Commerce FINAL v5
+Fix: Windows file:// navigation no longer opens folder directory listings.
+Root cause: links such as href="./" and language routes ending with / resolve to directories when opened directly from disk.
+Fix applied: all storefront navigation now points to explicit index.html files, including English/Arabic switch and product return flow.
+Verification: full Node test suite 25/25 passed; JavaScript syntax passed; 295 local references checked with 0 missing; no directory-style storefront navigation remains.
