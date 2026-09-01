@@ -1,1 +1,0 @@
-Upload the CONTENTS of this folder to the repository root. The admin folder must remain a folder.
