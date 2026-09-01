@@ -1,0 +1,4 @@
+-- Production migration reconciliation
+-- Version: 20260901104018
+-- Name: commerce_rls_performance_hardening
+-- Already applied to production.

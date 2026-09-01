@@ -1,0 +1,5 @@
+-- Production migration reconciliation
+-- Version: 20260901103850
+-- Name: analytics_visitor_tracking
+-- This migration version is already applied to production.
+-- Kept locally so Supabase migration history and repository history remain aligned.

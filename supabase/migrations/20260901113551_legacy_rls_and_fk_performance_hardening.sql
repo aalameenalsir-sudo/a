@@ -1,0 +1,4 @@
+-- Production migration reconciliation
+-- Version: 20260901113551
+-- Name: legacy_rls_and_fk_performance_hardening
+-- Already applied to production.

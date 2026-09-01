@@ -1,0 +1,4 @@
+-- Production migration reconciliation
+-- Version: 20260901113703
+-- Name: analytics_summary_fail_closed
+-- Already applied to production.

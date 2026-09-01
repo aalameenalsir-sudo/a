@@ -1,0 +1,4 @@
+-- Production migration reconciliation
+-- Version: 20260901104030
+-- Name: commerce_finance_policy_split
+-- Already applied to production.

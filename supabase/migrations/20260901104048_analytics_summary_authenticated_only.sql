@@ -1,0 +1,4 @@
+-- Production migration reconciliation
+-- Version: 20260901104048
+-- Name: analytics_summary_authenticated_only
+-- Already applied to production.

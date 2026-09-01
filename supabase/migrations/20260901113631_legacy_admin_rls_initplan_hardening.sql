@@ -1,0 +1,4 @@
+-- Production migration reconciliation
+-- Version: 20260901113631
+-- Name: legacy_admin_rls_initplan_hardening
+-- Already applied to production.

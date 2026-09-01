@@ -1,0 +1,4 @@
+-- Production migration reconciliation
+-- Version: 20260901113520
+-- Name: harden_analytics_rpc_boundaries
+-- Already applied to production.
