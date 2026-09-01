@@ -168,4 +168,14 @@ initActiveNavigation();
 const publicEmailNode=document.querySelector('#contact-email');
 if(publicEmailNode&&!publicEmailNode.textContent.trim()){publicEmailNode.textContent=PUBLIC_EMAIL;publicEmailNode.href=`mailto:${PUBLIC_EMAIL}`;}
 
+})();;(()=>{
+  if (window.__ASOLUTION_ANALYTICS_LOADED__) return;
+
+  window.__ASOLUTION_ANALYTICS_LOADED__ = true;
+
+  const script = document.createElement('script');
+  script.src = '/analytics.js';
+  script.defer = true;
+
+  document.head.appendChild(script);
 })();
