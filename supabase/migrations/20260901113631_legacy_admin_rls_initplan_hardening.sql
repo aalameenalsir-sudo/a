@@ -1,4 +1,5 @@
--- Production migration reconciliation
--- Version: 20260901113631
--- Name: legacy_admin_rls_initplan_hardening
--- Already applied to production.
+alter policy "Admins can manage projects" on public.projects using (exists(select 1 from public.profiles where id=(select auth.uid()) and role='admin')) with check (exists(select 1 from public.profiles where id=(select auth.uid()) and role='admin'));
+alter policy "Admins can manage clients" on public.clients using (exists(select 1 from public.profiles where id=(select auth.uid()) and role='admin')) with check (exists(select 1 from public.profiles where id=(select auth.uid()) and role='admin'));
+alter policy "Admins can manage messages" on public.messages using (exists(select 1 from public.profiles where id=(select auth.uid()) and role='admin')) with check (exists(select 1 from public.profiles where id=(select auth.uid()) and role='admin'));
+alter policy "Admins can manage settings" on public.settings using (exists(select 1 from public.profiles where id=(select auth.uid()) and role='admin')) with check (exists(select 1 from public.profiles where id=(select auth.uid()) and role='admin'));
+alter policy "Admins can manage site content" on public.site_content using (exists(select 1 from public.profiles p where p.id=(select auth.uid()) and p.role='admin')) with check (exists(select 1 from public.profiles p where p.id=(select auth.uid()) and p.role='admin'));

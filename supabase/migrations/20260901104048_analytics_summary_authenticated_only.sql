@@ -1,4 +1,2 @@
--- Production migration reconciliation
--- Version: 20260901104048
--- Name: analytics_summary_authenticated_only
--- Already applied to production.
+revoke execute on function public.analytics_summary(text) from anon;
+grant execute on function public.analytics_summary(text) to authenticated;
