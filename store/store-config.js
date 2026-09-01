@@ -9,3 +9,6 @@ window.ASOLUTION_STORE_CONFIG={
   payment:{provider:"invoice",onlineProviderReady:false,webhookServerSideOnly:true},
   security:{note:"Only the publishable key is used in browser code. Privileged keys and provider secrets remain server-side."}
 };
+;(()=>{if(window.__ASOLUTION_ANALYTICS_LOADED__)return;window.__ASOLUTION_ANALYTICS_LOADED__=true;
+const s=document.createElement('script');s.src='/analytics.js';s.defer=true;document.head.appendChild(s);
+})();
