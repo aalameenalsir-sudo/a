@@ -4,221 +4,46 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>A Solution — Admin Dashboard</title>
-
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-client.js"></script>
-
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f5f6fa;
-      color: #1a1a1a;
-    }
-
-    header {
-      background: linear-gradient(90deg, #ff6b6b, #c44569, #574b90);
-      color: white;
-      padding: 20px 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 24px;
-    }
-
-    button {
-      border: none;
-      border-radius: 10px;
-      padding: 10px 16px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .logout-btn {
-      background: white;
-      color: #c44569;
-    }
-
-    main {
-      padding: 30px;
-      max-width: 1200px;
-      margin: auto;
-    }
-
-    .welcome {
-      background: white;
-      padding: 25px;
-      border-radius: 18px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.08);
-      margin-bottom: 25px;
-    }
-
-    .welcome h2 {
-      margin-top: 0;
-    }
-
-    #userEmail {
-      color: #666;
-      margin-bottom: 0;
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 20px;
-    }
-
-    .card {
-      background: white;
-      padding: 25px;
-      border-radius: 18px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.08);
-      transition: transform .2s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-3px);
-    }
-
-    .card h3 {
-      margin-top: 0;
-    }
-
-    .card p {
-      color: #666;
-      line-height: 1.5;
-    }
-
-    .status {
-      margin-top: 25px;
-      font-size: 14px;
-      color: #888;
-      text-align: center;
-    }
+    *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f5f6fa;color:#1a1a1a}
+    header{background:linear-gradient(90deg,#ff6b6b,#c44569,#574b90);color:white;padding:20px 30px;display:flex;justify-content:space-between;align-items:center}
+    header h1{margin:0;font-size:24px}button{border:none;border-radius:10px;padding:10px 16px;font-weight:bold;cursor:pointer}.logout-btn{background:white;color:#c44569}
+    main{padding:30px;max-width:1200px;margin:auto}.welcome,.section{background:white;padding:25px;border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.08);margin-bottom:25px}
+    .welcome h2,.section h2{margin-top:0}#userEmail{color:#666;margin-bottom:0}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px}
+    .card{background:white;padding:25px;border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.08)}.card h3{margin:0 0 8px}.card strong{font-size:28px}.card p{color:#666;line-height:1.5}.status{margin-top:25px;font-size:14px;color:#888;text-align:center}
   </style>
 </head>
-
 <body>
-
-  <header>
-    <h1>A Solution Admin</h1>
-
-    <button
-      class="logout-btn"
-      id="logoutBtn"
-      type="button"
-    >
-      Logout
-    </button>
-  </header>
-
-  <main>
-
-    <div class="welcome">
-      <h2>Welcome to the Admin Dashboard</h2>
-      <p id="userEmail">Checking your account...</p>
-    </div>
-
-    <div class="cards">
-
-      <div class="card">
-        <h3>Projects</h3>
-        <p>Manage website projects and content.</p>
-      </div>
-
-      <div class="card">
-        <h3>Clients</h3>
-        <p>Manage client information.</p>
-      </div>
-
-      <div class="card">
-        <h3>Messages</h3>
-        <p>View customer inquiries and messages.</p>
-      </div>
-
-      <div class="card">
-        <h3>Settings</h3>
-        <p>Manage admin and website settings.</p>
-      </div>
-
-    </div>
-
-    <div class="status" id="status"></div>
-
-  </main>
-
-  <script>
-    const userEmail = document.getElementById("userEmail");
-    const status = document.getElementById("status");
-    const logoutBtn = document.getElementById("logoutBtn");
-
-    async function checkUser() {
-      try {
-
-        const {
-          data: { session },
-          error
-        } = await supabaseClient.auth.getSession();
-
-        if (error) {
-          throw error;
-        }
-
-        if (!session) {
-          window.location.href = "index.html";
-          return;
-        }
-
-        userEmail.textContent =
-          "Logged in as: " + session.user.email;
-
-        status.textContent = "Connected to Supabase";
-
-      } catch (error) {
-
-        console.error("Session error:", error);
-
-        userEmail.textContent =
-          "Unable to verify account.";
-
-        status.textContent =
-          "Connection error: " + error.message;
-      }
-    }
-
-    logoutBtn.addEventListener("click", async function() {
-
-      logoutBtn.disabled = true;
-      logoutBtn.textContent = "Logging out...";
-
-      try {
-
-        await supabaseClient.auth.signOut();
-
-        window.location.href = "index.html";
-
-      } catch (error) {
-
-        console.error("Logout error:", error);
-
-        status.textContent =
-          "Logout error: " + error.message;
-
-        logoutBtn.disabled = false;
-        logoutBtn.textContent = "Logout";
-      }
-    });
-
-    checkUser();
-  </script>
-
-</body>
-</html>
+<header><h1>A Solution Admin</h1><button class="logout-btn" id="logoutBtn" type="button">Logout</button></header>
+<main>
+  <div class="welcome"><h2>Welcome to the Admin Dashboard</h2><p id="userEmail">Checking your account...</p></div>
+  <section class="section"><h2>Website Visitor Analytics</h2><div class="cards" id="websiteAnalytics"><div class="card"><p>Loading analytics...</p></div></div></section>
+  <div class="cards">
+    <div class="card"><h3>Projects</h3><p>Manage website projects and content.</p></div>
+    <div class="card"><h3>Clients</h3><p>Manage client information.</p></div>
+    <div class="card"><h3>Messages</h3><p>View customer inquiries and messages.</p></div>
+    <div class="card"><h3>Settings</h3><p>Manage admin and website settings.</p></div>
+  </div>
+  <div class="status" id="status"></div>
+</main>
+<script>
+const userEmail=document.getElementById("userEmail"),status=document.getElementById("status"),logoutBtn=document.getElementById("logoutBtn"),websiteAnalytics=document.getElementById("websiteAnalytics");
+function metric(label,value){return `<div class="card"><h3>${label}</h3><strong>${Number(value||0).toLocaleString()}</strong></div>`}
+async function checkUser(){
+ try{
+  const {data:{session},error}=await supabaseClient.auth.getSession();if(error)throw error;
+  if(!session){window.location.href="index.html";return}
+  userEmail.textContent="Logged in as: "+session.user.email;
+  const {data,error:analyticsError}=await supabaseClient.rpc("analytics_summary",{p_scope:"website"});
+  if(analyticsError)throw analyticsError;
+  const a=data||{};
+  websiteAnalytics.innerHTML=metric("Total Visitors",a.total_visitors)+metric("Today",a.today_visitors)+metric("Online Now",a.online_now)+metric("7 Days",a.seven_day_visitors)+metric("30 Days",a.thirty_day_visitors)+metric("Page Views",a.page_views);
+  status.textContent="Connected to Supabase";
+ }catch(error){console.error("Dashboard error:",error);userEmail.textContent="Unable to verify account.";status.textContent="Connection error: "+error.message;websiteAnalytics.innerHTML='<div class="card"><p>Analytics unavailable.</p></div>'}
+}
+logoutBtn.addEventListener("click",async()=>{logoutBtn.disabled=true;logoutBtn.textContent="Logging out...";try{await supabaseClient.auth.signOut();window.location.href="index.html"}catch(error){status.textContent="Logout error: "+error.message;logoutBtn.disabled=false;logoutBtn.textContent="Logout"}});
+checkUser();
+</script>
+</body></html>
