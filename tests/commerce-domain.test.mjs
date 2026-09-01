@@ -1,0 +1,10 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import vm from 'node:vm';
+const code=fs.readFileSync(new URL('../store/commerce-domain.js',import.meta.url),'utf8');const context={window:{}};vm.createContext(context);vm.runInContext(code,context);const d=context.window.ASolutionCommerceDomain;
+const catalog=[{id:'p1',slug:'p1',type:'physical',price:100},{id:'d1',slug:'d1',type:'digital',price:50},{id:'s1',slug:'s1',type:'service',price:200}].map(x=>({id:x.id,remoteId:x.id,type:x.type,category:'x',price:x.price,en:{},ar:{}}));
+test('dynamic catalog cart accepts products not hardcoded in legacy catalog',()=>{assert.deepEqual(JSON.parse(JSON.stringify(d.addToCart([], 'p1', 2, null, catalog))),[{id:'p1',qty:2,variantId:null}]);});
+test('mixed carts calculate from runtime catalog',()=>{const cart=[{id:'p1',qty:2,variantId:null},{id:'d1',qty:1,variantId:null}];assert.equal(d.cartSubtotal(cart,catalog),250);});
+test('COD is rejected for mixed physical and digital carts',()=>{assert.equal(d.paymentMethodEligible('cod',[{id:'p1',qty:1},{id:'d1',qty:1}],catalog),false);});
+test('COD is allowed for physical-only cart',()=>{assert.equal(d.paymentMethodEligible('cod',[{id:'p1',qty:1}],catalog),true);});
+test('totals round VAT to cents',()=>{assert.deepEqual(JSON.parse(JSON.stringify(d.calculateTotals({subtotal:99.99,discount:10,shipping:20,vatRate:.15}))),{subtotal:99.99,discount:10,shipping:20,vat:16.5,total:126.49});});
+test('checkout validates required customer fields',()=>{assert.equal(d.validateCheckout({name:'A',email:'a@b.com',phone:'1',city:'Riyadh'}).valid,true);assert.equal(d.validateCheckout({name:'',email:'bad',phone:'',city:''}).valid,false);});
+test('customer digital files are loaded through a direct product files query',()=>{const s=fs.readFileSync(new URL('../store/remote.js',import.meta.url),'utf8');assert.doesNotMatch(s,/commerce_digital_files:commerce_products/);assert.match(s,/async function entitlementFiles\(productId\)/);});

@@ -1,89 +1,14 @@
-(function(){
-'use strict';
-const cfg={url:'https://bgxtcpcbkjftkgswpizr.supabase.co',key:'sb_publishable_t9MKvlsLheyCj-o-jIQ04A_9sGI_j_r'};
-const loginTarget='store-login.html';
-function getToken(){
-  try{
-    const direct=JSON.parse(localStorage.getItem('asolution_supabase_session')||'null');
-    if(direct?.access_token)return direct.access_token;
-    for(let i=0;i<localStorage.length;i++){
-      const k=localStorage.key(i)||'';
-      if(k.startsWith('sb-')&&k.endsWith('-auth-token')){
-        const v=JSON.parse(localStorage.getItem(k)||'null');
-        const s=v?.access_token?v:v?.currentSession||v?.session;
-        if(s?.access_token)return s.access_token;
-      }
-    }
-  }catch{}
-  return null;
-}
-function escapeHTML(value){
-  return String(value??'').replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
-}
-function jwtSubject(token){
-  try{
-    const part=token.split('.')[1];
-    if(!part)return null;
-    const normalized=part.replace(/-/g,'+').replace(/_/g,'/').padEnd(Math.ceil(part.length/4)*4,'=');
-    return JSON.parse(atob(normalized))?.sub||null;
-  }catch{return null;}
-}
-async function req(table,query='',opts={}){
-  const token=getToken();
-  if(!token)throw new Error('ADMIN_LOGIN_REQUIRED');
-  const r=await fetch(`${cfg.url}/rest/v1/${table}${query}`,{
-    ...opts,
-    headers:{apikey:cfg.key,Authorization:`Bearer ${token}`,'Content-Type':'application/json',...(opts.headers||{})}
-  });
-  const text=await r.text();
-  let data=null;
-  try{data=text?JSON.parse(text):null}catch{data=text}
-  if(!r.ok)throw new Error(data?.message||data?.error||`HTTP ${r.status}`);
-  return data;
-}
-async function role(){
-  const token=getToken();
-  if(!token)return false;
-  const sub=jwtSubject(token);
-  if(!sub)return false;
-  try{
-    const rows=await req('profiles',`?id=eq.${encodeURIComponent(sub)}&select=role`);
-    return rows?.[0]?.role==='admin';
-  }catch{return false;}
-}
-function redirectToLogin(){
-  const current=(location.pathname.split('/').pop()||'store-dashboard.html')+location.search+location.hash;
-  location.replace(`${loginTarget}?next=${encodeURIComponent(current)}`);
-}
-async function signOut(){
-  const token=getToken();
-  try{
-    if(token)await fetch(`${cfg.url}/auth/v1/logout`,{method:'POST',headers:{apikey:cfg.key,Authorization:`Bearer ${token}`}});
-  }catch{}
-  try{
-    for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i)||'';if(k==='asolution_supabase_session'||(k.startsWith('sb-')&&k.endsWith('-auth-token')))localStorage.removeItem(k)}
-  }catch{}
-  location.replace(loginTarget);
-}
-function decorate(){
-  const nav=document.querySelector('.admin-nav');
-  if(!nav||nav.querySelector('[data-store-admin-tools]'))return;
-  const tools=document.createElement('div');
-  tools.dataset.storeAdminTools='1';
-  tools.className='store-admin-tools';
-  tools.innerHTML='<a href="../store/index.html" target="_blank" rel="noopener">View store ↗</a><button type="button" class="pill" data-store-logout>Sign out</button>';
-  nav.appendChild(tools);
-  tools.querySelector('[data-store-logout]').addEventListener('click',signOut);
-}
-async function guard(){
-  if(!(await role())){redirectToLogin();throw new Error('ADMIN_FORBIDDEN');}
-  decorate();
-  return true;
-}
-function showError(target,error){
-  const el=typeof target==='string'?document.querySelector(target):target;
-  if(el){el.innerHTML=`<div class="admin-error">${escapeHTML(error?.message||error||'Something went wrong.')}</div>`;}
-  console.error(error);
-}
-window.ASolutionAdmin={req,guard,getToken,escapeHTML,showError,signOut,cfg,loginTarget};
-})();
+(function(){'use strict';const cfg={url:'https://bgxtcpcbkjftkgswpizr.supabase.co',key:'sb_publishable_t9MKvlsLheyCj-o-jIQ04A_9sGI_j_r'},loginTarget='store-login.html';let cachedRole=null;
+function getToken(){try{const direct=JSON.parse(localStorage.getItem('asolution_supabase_session')||'null');if(direct?.access_token)return direct.access_token;for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i)||'';if(k.startsWith('sb-')&&k.endsWith('-auth-token')){const v=JSON.parse(localStorage.getItem(k)||'null'),s=v?.access_token?v:v?.currentSession||v?.session;if(s?.access_token)return s.access_token}}}catch{}return null}
+function escapeHTML(v){return String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]))}
+async function request(path,opts={}){const token=getToken();if(!token)throw new Error('ADMIN_LOGIN_REQUIRED');const r=await fetch(cfg.url+path,{...opts,headers:{apikey:cfg.key,Authorization:`Bearer ${token}`,'Content-Type':'application/json',...(opts.headers||{})}}),text=await r.text();let data=null;try{data=text?JSON.parse(text):null}catch{data=text}if(!r.ok)throw new Error(data?.message||data?.error||`HTTP ${r.status}`);return data}
+async function req(table,query='',opts={}){return request(`/rest/v1/${table}${query}`,opts)}
+async function role(force=false){if(cachedRole&&!force)return cachedRole;try{const rows=await request('/rest/v1/rpc/commerce_staff_role',{method:'POST',body:'{}'});cachedRole=typeof rows==='string'?rows:rows?.role||rows||null;if(!cachedRole){const token=getToken(),payload=JSON.parse(atob(token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/').padEnd(Math.ceil(token.split('.')[1].length/4)*4,'=')));const p=await req('profiles',`?id=eq.${encodeURIComponent(payload.sub)}&select=role`);cachedRole=p?.[0]?.role==='admin'?'admin':null}return cachedRole}catch{return null}}
+function can(permission,r=cachedRole){if(['owner','admin'].includes(r))return true;const map={'catalog.write':['store_manager','marketing'],'orders.write':['store_manager','fulfillment','support'],'customers.write':['store_manager','sales_crm','support'],'finance.write':['finance'],'settings.write':['store_manager'],'reports.read':['store_manager','finance','marketing','sales_crm','viewer']};return (map[permission]||[]).includes(r)}
+function redirectToLogin(){const current=(location.pathname.split('/').pop()||'store-dashboard.html')+location.search+location.hash;location.replace(`${loginTarget}?next=${encodeURIComponent(current)}`)}
+async function guard(permission=null){const r=await role();if(!r){redirectToLogin();throw new Error('ADMIN_FORBIDDEN')}if(permission&&!can(permission,r))throw new Error('You do not have permission for this section.');decorate(r);return r}
+async function signOut(){const token=getToken();try{if(token)await fetch(`${cfg.url}/auth/v1/logout`,{method:'POST',headers:{apikey:cfg.key,Authorization:`Bearer ${token}`}})}catch{}for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i)||'';if(k==='asolution_supabase_session'||(k.startsWith('sb-')&&k.endsWith('-auth-token')))localStorage.removeItem(k)}location.replace(loginTarget)}
+function decorate(r){const nav=document.querySelector('.admin-nav');if(!nav||nav.querySelector('[data-store-admin-tools]'))return;const roles=['owner','admin'].includes(r)?'<a href="store-roles.html">Team & Roles</a>':'';nav.insertAdjacentHTML('beforeend',roles+`<div data-store-admin-tools class="store-admin-tools"><small>${escapeHTML(r)}</small><a href="../store/index.html" target="_blank" rel="noopener">View store ↗</a><button type="button" class="pill" data-store-logout>Sign out</button></div>`);nav.querySelector('[data-store-logout]').addEventListener('click',signOut)}
+async function uploadFile(file,kind){const token=getToken();if(!token)throw new Error('ADMIN_LOGIN_REQUIRED');const form=new FormData();form.append('file',file);form.append('kind',kind);const r=await fetch(`${cfg.url}/functions/v1/commerce-admin-upload`,{method:'POST',headers:{apikey:cfg.key,Authorization:`Bearer ${token}`},body:form}),data=await r.json().catch(()=>({}));if(!r.ok)throw new Error(data.error||'Upload failed');return data;}
+function showError(target,error){const el=typeof target==='string'?document.querySelector(target):target;if(el)el.innerHTML=`<div class="admin-error">${escapeHTML(error?.message||error||'Something went wrong.')}</div>`;console.error(error)}
+window.ASolutionAdmin={req,request,guard,role,can,getToken,escapeHTML,showError,uploadFile,signOut,cfg,loginTarget};})();
