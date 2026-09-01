@@ -1,0 +1,11 @@
+A SOLUTION FINAL CORRECTION
+Upload from the repository ROOT.
+After extracting this ZIP, drag BOTH folders named "store" and "ar" into GitHub's root Upload files page.
+Do NOT upload the ZIP itself.
+Expected paths:
+store/store-core.js
+store/store-app.js
+store/product.js
+store/wishlist.js
+store/reviews.html
+ar/store/reviews.html
