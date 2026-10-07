@@ -588,6 +588,7 @@ body { font-family: Manrope, Alexandria, Arial, sans-serif; }
 }
 
 .ah-pattern { opacity: .86; }
+.ah-pattern { display: none; }
 .ah-tool { color: var(--ah-brand); }
 
 .ah-brand {
