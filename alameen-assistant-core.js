@@ -1,0 +1,52 @@
+(function (root, factory) {
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = factory();
+  } else {
+    root.AlameenAssistantCore = factory();
+  }
+})(typeof self !== 'undefined' ? self : this, function () {
+  var arabic = {
+    welcome: 'السلام عليكم، أنا الأمين تاج السر من A Solution. شنو المشكلة أو التحدي العايز نساعدك تحلّه اليوم؟',
+    marketing: 'ممتاز. نقدر نساعدك في استراتيجية التسويق، صناعة المحتوى، الإعلانات المدفوعة وبناء حملات تحقق نتائج.',
+    digital: 'تمام. نبدأ بفهم هدفك ثم نصمم الموقع أو التطبيق أو المنتج الرقمي المناسب لطريقة عملك.',
+    technology: 'خلّينا نفهم احتياجك التقني ونرتب لك النظام أو البنية أو الحل الذي يجعل العمل أوضح وأسهل.',
+    consulting: 'ممتاز. احكِ لي عن التحدي الإداري أو التشغيلي، ونحوّله إلى خطوات عملية قابلة للتنفيذ.',
+    fallback: 'تمام، احكِ لي أكثر عن التحدي. الأمين معاك عشان نحدد الحل المناسب خطوة بخطوة.'
+  };
+
+  var english = {
+    welcome: 'Hello, I’m Alameen Taj Alsir from A Solution. What challenge should we help you solve today?',
+    marketing: 'Great. We can help with marketing strategy, content, paid media and campaigns built for results.',
+    digital: 'Absolutely. We start with your goal, then shape the website, app or digital product around how your business works.',
+    technology: 'Let’s understand the technical need and organize the system, infrastructure or solution that makes work clearer.',
+    consulting: 'Tell me about the business or operational challenge and we’ll turn it into practical next steps.',
+    fallback: 'Tell me a little more about the challenge. I’ll help you find the right direction step by step.'
+  };
+
+  function getCopy(lang) {
+    return lang === 'ar' ? arabic : english;
+  }
+
+  function getWelcome(lang) {
+    return getCopy(lang).welcome;
+  }
+
+  function getReply(message, lang) {
+    var text = String(message || '').toLowerCase();
+    var copy = getCopy(lang);
+    if (lang === 'ar') {
+      if (/تسويق|إعلان|اعلان|محتوى|حملة/.test(text)) return copy.marketing;
+      if (/موقع|تطبيق|رقمي|متجر|ويب/.test(text)) return copy.digital;
+      if (/تقني|نظام|كامير|شاشة|بنية|أتمتة/.test(text)) return copy.technology;
+      if (/استشار|إدارة|ادارة|تشغيل|نمو|أعمال|اعمال/.test(text)) return copy.consulting;
+    } else {
+      if (/marketing|advertising|content|campaign/.test(text)) return copy.marketing;
+      if (/website|app|digital|store|web/.test(text)) return copy.digital;
+      if (/technology|system|camera|screen|automation|infrastructure/.test(text)) return copy.technology;
+      if (/consult|management|operations|growth|business/.test(text)) return copy.consulting;
+    }
+    return copy.fallback;
+  }
+
+  return { getWelcome: getWelcome, getReply: getReply };
+});
