@@ -14,6 +14,8 @@
     name: 'الأمين تاج السر',
     role: 'مساعد الحلول الرقمية',
     status: 'متاح الآن',
+    idle: 'اسأل الأمين عن تحديك',
+    speaking: 'الأمين يتحدث الآن',
     input: 'اكتب تحديك هنا...',
     send: 'إرسال',
     speak: 'استمع للرد',
@@ -29,6 +31,8 @@
     name: 'Alameen Taj Alsir',
     role: 'Digital solutions assistant',
     status: 'Available now',
+    idle: 'Ask Alameen about your challenge',
+    speaking: 'Alameen is speaking',
     input: 'Tell me about your challenge...',
     send: 'Send',
     speak: 'Listen to reply',
@@ -72,6 +76,27 @@
     .alameen-assistant-head-copy span{font-size:9px;color:#aaa}
     .alameen-assistant-close{border:0;background:transparent;color:#f2efe8;font-size:25px;line-height:1;cursor:pointer;padding:2px 6px}
     .alameen-assistant-close:hover{color:#ff6b6b}
+    .alameen-human-stage{position:relative;display:grid;place-items:center;min-height:190px;padding:18px 16px 13px;overflow:hidden;background:radial-gradient(circle at 50% 35%,rgba(255,107,107,.28),transparent 44%),linear-gradient(135deg,#15151b,#34305a 52%,#ff6253)}
+    .alameen-human-stage:before{content:"";position:absolute;width:190px;height:190px;border:1px solid rgba(255,255,255,.26);border-radius:50%;animation:alameen-orbit 18s linear infinite}
+    .alameen-human-stage:after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 15%,rgba(255,255,255,.1) 48%,transparent 70%);transform:translateX(-120%);animation:alameen-sheen 7s ease-in-out infinite}
+    .alameen-human-portrait{position:relative;z-index:1;width:148px;height:148px;overflow:hidden;border:3px solid rgba(255,255,255,.86);border-radius:50%;box-shadow:0 20px 55px rgba(0,0,0,.34);animation:alameen-idle 4.5s ease-in-out infinite}
+    .alameen-human-portrait img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 23%;filter:saturate(1.04) contrast(1.02)}
+    .alameen-speech-bars{position:absolute;z-index:2;bottom:18px;display:flex;align-items:end;gap:3px;height:20px}
+    .alameen-speech-bars i{display:block;width:3px;height:5px;border-radius:9px;background:#fff;opacity:.72}
+    #alameen-assistant-root.speaking .alameen-human-portrait{animation:alameen-speaking 1.15s ease-in-out infinite}
+    #alameen-assistant-root.speaking .alameen-human-portrait:after{content:"";position:absolute;inset:-8px;border:2px solid rgba(255,255,255,.46);border-radius:50%;animation:alameen-pulse 1.15s ease-out infinite}
+    #alameen-assistant-root.speaking .alameen-speech-bars i{animation:alameen-bars .72s ease-in-out infinite alternate}
+    #alameen-assistant-root.speaking .alameen-speech-bars i:nth-child(2){animation-delay:.12s}
+    #alameen-assistant-root.speaking .alameen-speech-bars i:nth-child(3){animation-delay:.24s}
+    #alameen-assistant-root.speaking .alameen-speech-bars i:nth-child(4){animation-delay:.36s}
+    #alameen-assistant-root.speaking .alameen-speech-bars i:nth-child(5){animation-delay:.48s}
+    .alameen-human-caption{position:absolute;z-index:2;bottom:7px;color:rgba(255,255,255,.78);font-size:9px;letter-spacing:.05em}
+    @keyframes alameen-idle{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-5px) rotate(1deg)}}
+    @keyframes alameen-speaking{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-4px) scale(1.025)}}
+    @keyframes alameen-pulse{0%{opacity:.8;transform:scale(.96)}100%{opacity:0;transform:scale(1.12)}}
+    @keyframes alameen-bars{0%{height:5px}100%{height:19px}}
+    @keyframes alameen-orbit{to{transform:rotate(360deg)}}
+    @keyframes alameen-sheen{0%,62%,100%{transform:translateX(-120%)}78%{transform:translateX(120%)}}
     .alameen-assistant-messages{flex:1;overflow:auto;padding:18px 16px 10px;display:flex;flex-direction:column;gap:10px;background:radial-gradient(circle at 100% 0,rgba(255,107,107,.12),transparent 34%),#f2efe8}
     .alameen-message{max-width:86%;padding:11px 13px;border-radius:15px;font-size:12px;line-height:1.65;white-space:pre-wrap}
     .alameen-message.assistant{align-self:flex-start;background:#fff;border:1px solid rgba(16,16,16,.08);border-bottom-left-radius:4px}
@@ -108,6 +133,11 @@
         <div class="alameen-assistant-head-copy"><strong></strong><span></span></div>
         <button class="alameen-assistant-close" type="button" aria-label=""></button>
       </header>
+      <div class="alameen-human-stage" aria-live="polite">
+        <div class="alameen-human-portrait"><img alt=""></div>
+        <div class="alameen-speech-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+        <span class="alameen-human-caption"></span>
+      </div>
       <div class="alameen-assistant-messages"></div>
       <div class="alameen-assistant-quick"></div>
       <a class="alameen-project-link" href="#contact"></a>
@@ -131,12 +161,17 @@
   var input = form.querySelector('input');
   var speakButton = root.querySelector('.alameen-speak');
   var projectLink = root.querySelector('.alameen-project-link');
+  var humanPortrait = root.querySelector('.alameen-human-portrait img');
+  var humanCaption = root.querySelector('.alameen-human-caption');
   var lastAssistantMessage = core.getWelcome(lang);
 
   root.querySelectorAll('img').forEach(function (image) {
     image.src = avatar;
     image.alt = copy.name;
   });
+  humanPortrait.src = avatar;
+  humanPortrait.alt = copy.name;
+  humanCaption.textContent = copy.idle;
   root.querySelector('.alameen-toggle-copy strong').textContent = copy.name;
   root.querySelector('.alameen-assistant-head-copy strong').textContent = copy.name;
   root.querySelector('.alameen-assistant-head-copy span').textContent = copy.role + ' · ' + copy.status;
@@ -159,6 +194,26 @@
   function answer(text) {
     addMessage(text, 'assistant');
     lastAssistantMessage = text;
+    speakText(text);
+  }
+
+  function setSpeaking(active) {
+    root.classList.toggle('speaking', active);
+    humanCaption.textContent = active ? copy.speaking : copy.idle;
+  }
+
+  function speakText(text) {
+    if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) return;
+    window.speechSynthesis.cancel();
+    var speech = core.getSpeechConfig(lang);
+    var utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = speech.lang;
+    utterance.rate = speech.rate;
+    utterance.pitch = speech.pitch;
+    utterance.onstart = function () { setSpeaking(true); };
+    utterance.onend = function () { setSpeaking(false); };
+    utterance.onerror = function () { setSpeaking(false); };
+    window.speechSynthesis.speak(utterance);
   }
 
   addMessage(lastAssistantMessage, 'assistant');
@@ -178,7 +233,13 @@
   function setOpen(open) {
     root.classList.toggle('open', open);
     toggle.setAttribute('aria-expanded', String(open));
-    if (open) window.setTimeout(function () { input.focus(); }, 80);
+    if (open) {
+      speakText(lastAssistantMessage);
+      window.setTimeout(function () { input.focus(); }, 80);
+    } else if (window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+      setSpeaking(false);
+    }
   }
 
   toggle.addEventListener('click', function () { setOpen(true); });
@@ -195,12 +256,6 @@
   });
 
   speakButton.addEventListener('click', function () {
-    if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) return;
-    window.speechSynthesis.cancel();
-    var utterance = new SpeechSynthesisUtterance(lastAssistantMessage);
-    utterance.lang = isArabic ? 'ar' : 'en-US';
-    utterance.rate = .92;
-    utterance.pitch = .98;
-    window.speechSynthesis.speak(utterance);
+    speakText(lastAssistantMessage);
   });
 })();

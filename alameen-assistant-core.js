@@ -48,5 +48,17 @@
     return copy.fallback;
   }
 
-  return { getWelcome: getWelcome, getReply: getReply };
+  function getSpeechConfig(lang) {
+    return {
+      lang: lang === 'ar' ? 'ar-SA' : 'en-US',
+      rate: 0.92,
+      pitch: 0.98
+    };
+  }
+
+  return {
+    getWelcome: getWelcome,
+    getReply: getReply,
+    getSpeechConfig: getSpeechConfig
+  };
 });
