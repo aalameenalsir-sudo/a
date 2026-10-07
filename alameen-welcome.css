@@ -733,3 +733,51 @@ body { font-family: Manrope, Alexandria, Arial, sans-serif; }
   .ah-brand-logo { width: 122px; padding: 6px 9px; }
   .ah-brand span { font-size: 6px; }
 }
+
+/* Real talking-human video layer */
+.ah-video-well {
+  position: absolute;
+  z-index: 0;
+  left: 50%;
+  bottom: -2vh;
+  width: min(56vw, 740px);
+  height: min(94vh, 960px);
+  border-radius: 50% 50% 0 0;
+  background: var(--ah-paper);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, .24), 0 0 0 1px rgba(242, 239, 232, .16);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.ah-human-video,
+.ah-human-fallback {
+  z-index: 1;
+  width: min(56vw, 740px);
+  height: min(94vh, 960px);
+  bottom: -2vh;
+  object-fit: cover;
+  object-position: center top;
+  border: 0;
+  border-radius: 0;
+  mix-blend-mode: multiply;
+  filter: none;
+  animation: none !important;
+  pointer-events: none;
+}
+
+.ah-human-video::-webkit-media-controls { display: none !important; }
+
+.ah-app.is-speaking .ah-human-video,
+.ah-app.is-listening .ah-human-video { filter: none !important; }
+
+.ah-human-fallback[hidden] { display: none !important; }
+
+@media (max-width: 760px) {
+  .ah-video-well,
+  .ah-human-video,
+  .ah-human-fallback {
+    width: 100vw;
+    height: 90vh;
+    bottom: 3vh;
+  }
+}

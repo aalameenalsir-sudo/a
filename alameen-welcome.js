@@ -12,6 +12,7 @@
   var copy = core.getWelcomePageCopy(lang);
   var base = String(window.ALAMEEN_WELCOME_BASE || './').replace(/\/?$/, '/');
   var avatar = base + 'alameen-taj-alsir-standing.png';
+  var talkingVideo = base + 'alameen-taj-alsir-talking.mp4';
   var logo = base + 'a-solution-logo.png';
   var siteUrl = window.ALAMEEN_SITE_URL || (isArabic ? '../../ar/' : '../../');
   var alternateUrl = window.ALAMEEN_ALTERNATE_URL || (isArabic ? '../../Welcome/' : '../../ar/Welcome/');
@@ -52,10 +53,13 @@
 
       <section class="ah-human-stage" aria-live="polite">
         <div class="ah-human-aura" aria-hidden="true"></div>
+        <div class="ah-video-well" aria-hidden="true"></div>
         <div class="ah-human-ring" aria-hidden="true"></div>
         <div class="ah-audio-waves" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
-        <img class="ah-human ah-human-body" src="${avatar}" alt="${copy.name}">
-        <img class="ah-human ah-human-head" src="${avatar}" alt="" aria-hidden="true">
+        <video class="ah-human ah-human-video" autoplay muted loop playsinline preload="auto" poster="${avatar}" aria-label="${copy.name}">
+          <source src="${talkingVideo}" type="video/mp4">
+        </video>
+        <img class="ah-human ah-human-fallback" src="${avatar}" alt="${copy.name}" hidden>
       </section>
 
       <section class="ah-welcome-panel" aria-label="Welcome">
@@ -99,6 +103,8 @@
   var back = root.querySelector('.ah-back');
   var powered = root.querySelector('.ah-powered');
   var sessionHint = root.querySelector('.ah-session-hint');
+  var humanVideo = root.querySelector('.ah-human-video');
+  var humanFallback = root.querySelector('.ah-human-fallback');
   var recognition = null;
   var lastMessage = core.getWelcome(lang);
   var isRecognitionRunning = false;
@@ -119,6 +125,15 @@
   back.href = siteUrl;
   powered.textContent = copy.powered;
   sessionHint.textContent = copy.name;
+
+  if (humanVideo) {
+    humanVideo.addEventListener('error', function () {
+      humanVideo.hidden = true;
+      if (humanFallback) humanFallback.hidden = false;
+    });
+    var playRequest = humanVideo.play();
+    if (playRequest && typeof playRequest.catch === 'function') playRequest.catch(function () {});
+  }
 
   function setMode(mode) {
     root.classList.remove('is-welcome', 'is-session', 'is-listening', 'is-speaking', 'is-waiting');
