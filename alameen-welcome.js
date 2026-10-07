@@ -12,6 +12,7 @@
   var copy = core.getWelcomePageCopy(lang);
   var base = String(window.ALAMEEN_WELCOME_BASE || './').replace(/\/?$/, '/');
   var avatar = base + 'alameen-taj-alsir-standing.png';
+  var idleAvatar = base + 'alameen-taj-alsir-idle.jpg';
   var talkingVideo = base + 'alameen-taj-alsir-talking.mp4';
   var logo = base + 'a-solution-logo-tight.png';
   var siteUrl = window.ALAMEEN_SITE_URL || (isArabic ? '../../ar/' : '../../');
@@ -68,10 +69,10 @@
             <span class="ah-stage-status"><i aria-hidden="true"></i><b class="ah-stage-status-text"></b></span>
           </div>
           <div class="ah-video-stage">
-            <video class="ah-human ah-human-video" autoplay muted loop playsinline preload="auto" poster="${avatar}" aria-label="${copy.name}">
+            <video class="ah-human ah-human-video" muted playsinline preload="auto" poster="${idleAvatar}" hidden aria-label="${copy.name}">
               <source src="${talkingVideo}" type="video/mp4">
             </video>
-            <img class="ah-human ah-human-fallback" src="${avatar}" alt="${copy.name}" hidden>
+            <img class="ah-human ah-human-fallback" src="${idleAvatar}" alt="${copy.name}">
             <span class="ah-video-sheen" aria-hidden="true"></span>
           </div>
           <div class="ah-stage-caption">
@@ -122,6 +123,7 @@
   var recognition = null;
   var lastMessage = core.getWelcome(lang);
   var isRecognitionRunning = false;
+  var openingWelcomePlayed = false;
 
   introLead.textContent = isArabic ? 'مرحباً، أنا' : 'Hello, I’m';
   introName.textContent = copy.name;
@@ -167,10 +169,22 @@
     setMode(mode || 'session');
   }
 
-  function keepVideoPlaying() {
-    if (!humanVideo || humanVideo.hidden || document.visibilityState === 'hidden') return;
+  function startTalkingAnimation() {
+    if (!humanVideo || root.classList.contains('ah-video-fallback')) return;
+    if (humanFallback) humanFallback.hidden = true;
+    humanVideo.hidden = false;
+    humanVideo.loop = true;
+    try { humanVideo.currentTime = 0; } catch (error) {}
     var playRequest = humanVideo.play();
     if (playRequest && typeof playRequest.catch === 'function') playRequest.catch(function () {});
+  }
+
+  function stopTalkingAnimation() {
+    if (!humanVideo) return;
+    humanVideo.pause();
+    try { humanVideo.currentTime = 0; } catch (error) {}
+    humanVideo.hidden = true;
+    if (humanFallback) humanFallback.hidden = false;
   }
 
   function showVideoFallback() {
@@ -182,19 +196,24 @@
 
   if (humanVideo) {
     humanVideo.addEventListener('error', showVideoFallback);
-    humanVideo.addEventListener('loadeddata', keepVideoPlaying);
-    humanVideo.addEventListener('canplay', keepVideoPlaying);
-    humanVideo.addEventListener('pause', function () {
-      window.setTimeout(keepVideoPlaying, 180);
+    humanVideo.addEventListener('ended', stopTalkingAnimation);
+  }
+
+  if (humanFallback) {
+    humanFallback.addEventListener('error', function () {
+      if (humanFallback.src.indexOf('alameen-taj-alsir-standing.png') === -1) humanFallback.src = avatar;
     });
-    keepVideoPlaying();
   }
 
   function speakText(text, after) {
     lastMessage = text;
     setMode('speaking');
+    startTalkingAnimation();
     if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) {
-      if (after) window.setTimeout(after, 350);
+      window.setTimeout(function () {
+        stopTalkingAnimation();
+        if (after) after();
+      }, 350);
       return;
     }
     window.speechSynthesis.cancel();
@@ -205,15 +224,28 @@
     utterance.pitch = speech.pitch;
     utterance.onstart = function () { setStatus(text, 'speaking'); };
     utterance.onend = function () {
+      stopTalkingAnimation();
       setMode('session');
       if (after) after();
     };
     utterance.onerror = function () {
+      stopTalkingAnimation();
       setMode('session');
       if (after) after();
     };
     window.speechSynthesis.speak(utterance);
   }
+
+  function scheduleOpeningWelcome() {
+    window.setTimeout(function () {
+      if (document.visibilityState === 'hidden') return;
+      openingWelcomePlayed = true;
+      speakText(core.getWelcome(lang));
+    }, 650);
+  }
+
+  stageStatusText.textContent = stageLabel('welcome');
+  scheduleOpeningWelcome();
 
   async function requestMicrophone() {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return false;
@@ -300,6 +332,11 @@
     var microphoneAllowed = await requestMicrophone();
     setMode('session');
     statusText.textContent = microphoneAllowed ? copy.sessionPrompt : copy.microphone;
+    if (openingWelcomePlayed) {
+      if (microphoneAllowed) startListening();
+      return;
+    }
+    openingWelcomePlayed = true;
     speakText(core.getWelcome(lang), function () {
       if (microphoneAllowed) startListening();
     });
@@ -320,6 +357,7 @@
 
   window.addEventListener('pagehide', function () {
     stopListening();
+    stopTalkingAnimation();
     if (window.speechSynthesis) window.speechSynthesis.cancel();
   });
 })();
