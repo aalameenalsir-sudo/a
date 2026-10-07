@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
+
 :root {
   --ah-navy: #07085c;
   --ah-navy-deep: #05064b;
@@ -557,4 +559,176 @@ button { cursor: pointer; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
+/* A SOLUTION identity layer */
+:root {
+  --ah-paper: #f2efe8;
+  --ah-ink: #101010;
+  --ah-brand: #ff6b6b;
+  --ah-purple: #594a9d;
+  --ah-line: rgba(242, 239, 232, .22);
+}
+
+html,
+body { background: var(--ah-ink); }
+
+body { font-family: Manrope, Alexandria, Arial, sans-serif; }
+
+.ah-app {
+  background:
+    radial-gradient(circle at 50% 40%, rgba(255, 107, 107, .13), transparent 28%),
+    linear-gradient(145deg, #101010 0%, #181818 55%, #0e0e0e 100%);
+}
+
+.ah-app::before {
+  opacity: .2;
+  background-image: radial-gradient(rgba(242, 239, 232, .13) .6px, transparent .6px);
+  mix-blend-mode: screen;
+}
+
+.ah-pattern { opacity: .86; }
+.ah-tool { color: var(--ah-brand); }
+
+.ah-brand {
+  gap: 5px;
+  align-items: end;
+  color: var(--ah-paper);
+}
+
+.ah-brand-logo {
+  display: block;
+  width: clamp(132px, 13vw, 180px);
+  padding: 8px 12px;
+  border: 1px solid rgba(242, 239, 232, .22);
+  background: var(--ah-paper);
+  object-fit: contain;
+}
+
+.ah-brand span {
+  color: rgba(242, 239, 232, .72);
+  font-family: Space Grotesk, Manrope, Arial, sans-serif;
+  font-size: 8px;
+  letter-spacing: .16em;
+}
+
+.ah-language-card,
+.ah-notice,
+.ah-mic-notice,
+.ah-status { background: var(--ah-paper); }
+
+.ah-language-card a {
+  border-color: var(--ah-ink);
+  color: var(--ah-paper);
+  background: var(--ah-ink);
+}
+
+.ah-language-card a:hover {
+  color: var(--ah-ink);
+  background: var(--ah-brand);
+}
+
+.ah-human-aura {
+  bottom: 8vh;
+  width: min(47vw, 630px);
+  background: radial-gradient(circle, rgba(255, 107, 107, .27), rgba(89, 74, 157, .14) 42%, transparent 70%);
+}
+
+.ah-human,
+.ah-human-head {
+  width: min(44vw, 580px);
+  max-height: 92vh;
+  bottom: -12vh;
+  filter: drop-shadow(0 28px 22px rgba(0,0,0,.22));
+}
+
+.ah-human-body { clip-path: inset(21% 0 0 0); }
+
+.ah-human-head {
+  clip-path: inset(0 0 68% 0);
+  z-index: 2;
+  animation: ah-head-idle 5.8s ease-in-out infinite;
+}
+
+.ah-app.is-speaking .ah-human,
+.ah-app.is-listening .ah-human {
+  filter: drop-shadow(0 28px 22px rgba(0,0,0,.22)) drop-shadow(0 0 22px rgba(255,107,107,.22));
+}
+
+.ah-app.is-speaking .ah-human-head { animation: ah-head-speak 1.08s ease-in-out infinite; }
+.ah-app.is-listening .ah-human-head { animation: ah-head-listen 1.8s ease-in-out infinite; }
+
+.ah-human-ring { border-color: rgba(255, 107, 107, .3); }
+.ah-human-ring::after { border-color: rgba(89, 74, 157, .34); }
+.ah-audio-waves i { background: var(--ah-brand); }
+
+.ah-welcome-name {
+  color: var(--ah-paper);
+  font-family: Space Grotesk, Manrope, Arial, sans-serif;
+  letter-spacing: -.04em;
+}
+
+.ah-welcome-role,
+.ah-session-hint { color: rgba(242, 239, 232, .72); }
+.ah-mic-notice::before { color: var(--ah-brand); }
+
+.ah-start {
+  color: var(--ah-paper);
+  background: var(--ah-ink);
+  box-shadow: 0 12px 30px rgba(255, 107, 107, .2);
+  font-family: Manrope, Alexandria, Arial, sans-serif;
+}
+
+.ah-start:hover { color: var(--ah-ink); background: var(--ah-brand); }
+.ah-status-spinner { border-color: rgba(255,107,107,.25); border-top-color: var(--ah-brand); }
+.ah-send { color: var(--ah-brand); background: var(--ah-paper); }
+.ah-mic { color: var(--ah-ink); background: var(--ah-brand); }
+.ah-mic.is-active { color: var(--ah-ink); background: var(--ah-paper); }
+.ah-powered { color: var(--ah-brand); font-family: Space Grotesk, Manrope, Arial, sans-serif; }
+.ah-back { color: rgba(242, 239, 232, .84); }
+
+@keyframes ah-body-idle {
+  0%, 100% { transform: translateX(-50%) translateY(0) rotate(-.25deg); }
+  50% { transform: translateX(-50%) translateY(-5px) rotate(.25deg); }
+}
+
+@keyframes ah-head-idle {
+  0%, 100% { transform: translateX(-50%) translateY(0) rotate(-.45deg); }
+  45% { transform: translateX(-50%) translateY(-3px) rotate(.35deg); }
+  72% { transform: translateX(-50%) translateY(1px) rotate(.05deg); }
+}
+
+@keyframes ah-body-speak {
+  0%, 100% { transform: translateX(-50%) translateY(0) scale(1); }
+  35% { transform: translateX(-50%) translateY(-6px) scale(1.012); }
+  70% { transform: translateX(-50%) translateY(1px) scale(.998); }
+}
+
+@keyframes ah-head-speak {
+  0%, 100% { transform: translateX(-50%) translateY(0) rotate(-.7deg); }
+  28% { transform: translateX(-50%) translateY(-4px) rotate(.8deg); }
+  55% { transform: translateX(-50%) translateY(1px) rotate(-.3deg); }
+  78% { transform: translateX(-50%) translateY(-2px) rotate(.35deg); }
+}
+
+@keyframes ah-body-listen {
+  0%, 100% { transform: translateX(-50%) translateY(0) rotate(-.3deg); }
+  50% { transform: translateX(-50%) translateY(-4px) rotate(.3deg); }
+}
+
+@keyframes ah-head-listen {
+  0%, 100% { transform: translateX(-50%) translateY(0) rotate(-1deg); }
+  50% { transform: translateX(-50%) translateY(-2px) rotate(1deg); }
+}
+
+.ah-human-body { animation: ah-body-idle 5.8s ease-in-out infinite; }
+.ah-app.is-speaking .ah-human-body { animation: ah-body-speak 1.08s ease-in-out infinite; }
+.ah-app.is-listening .ah-human-body { animation: ah-body-listen 1.8s ease-in-out infinite; }
+
+@media (max-width: 760px) {
+  .ah-human,
+  .ah-human-head { width: 88vw; bottom: 1vh; max-height: none; }
+  .ah-human-aura { width: 88vw; bottom: 18vh; }
+  .ah-brand-logo { width: 122px; padding: 6px 9px; }
+  .ah-brand span { font-size: 6px; }
 }

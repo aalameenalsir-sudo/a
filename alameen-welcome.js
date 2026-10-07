@@ -11,7 +11,8 @@
   var lang = isArabic ? 'ar' : 'en';
   var copy = core.getWelcomePageCopy(lang);
   var base = String(window.ALAMEEN_WELCOME_BASE || './').replace(/\/?$/, '/');
-  var avatar = base + 'alameen-taj-alsir-transparent.png';
+  var avatar = base + 'alameen-taj-alsir-standing.png';
+  var logo = base + 'a-solution-logo.png';
   var siteUrl = window.ALAMEEN_SITE_URL || (isArabic ? '../../ar/' : '../../');
   var alternateUrl = window.ALAMEEN_ALTERNATE_URL || (isArabic ? '../../Welcome/' : '../../ar/Welcome/');
 
@@ -22,9 +23,9 @@
           <defs>
             <pattern id="ah-chevron-pattern" width="360" height="126" patternUnits="userSpaceOnUse">
               <g fill="none" stroke-width="17" stroke-linecap="square" stroke-linejoin="miter">
-                <path d="M-34 23 L30 63 L-34 103" stroke="#a477ff"></path>
-                <path d="M58 23 L122 63 L58 103 M184 23 L248 63 L184 103" stroke="#00d000"></path>
-                <path d="M310 23 L374 63 L310 103" stroke="#0872ff"></path>
+                <path d="M-34 108 L24 18 L82 108 M2 72 L46 72" stroke="#ff6b6b"></path>
+                <path d="M116 108 L174 18 L232 108 M152 72 L196 72" stroke="#594a9d"></path>
+                <path d="M266 108 L324 18 L382 108 M302 72 L346 72" stroke="#f2efe8" opacity=".32"></path>
               </g>
             </pattern>
           </defs>
@@ -39,7 +40,7 @@
           <button class="ah-tool ah-tool-cc" type="button" aria-label="Captions" aria-pressed="false">CC</button>
         </div>
         <div class="ah-brand" aria-label="A Solution">
-          <strong>A SOLUTION</strong>
+          <img class="ah-brand-logo" src="${logo}" alt="A Solution">
           <span>ALAMEEN DIGITAL HUMAN</span>
         </div>
       </header>
@@ -53,7 +54,8 @@
         <div class="ah-human-aura" aria-hidden="true"></div>
         <div class="ah-human-ring" aria-hidden="true"></div>
         <div class="ah-audio-waves" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
-        <img class="ah-human" src="${avatar}" alt="${copy.name}">
+        <img class="ah-human ah-human-body" src="${avatar}" alt="${copy.name}">
+        <img class="ah-human ah-human-head" src="${avatar}" alt="" aria-hidden="true">
       </section>
 
       <section class="ah-welcome-panel" aria-label="Welcome">
