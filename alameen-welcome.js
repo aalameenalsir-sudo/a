@@ -13,8 +13,9 @@
   var base = String(window.ALAMEEN_WELCOME_BASE || './').replace(/\/?$/, '/');
   var avatar = base + 'alameen-taj-alsir-standing.png';
   var idleAvatar = base + 'alameen-taj-alsir-idle.jpg';
-  var talkingVideo = base + 'alameen-taj-alsir-talking.mp4';
   var logo = base + 'a-solution-logo-tight.png';
+  var liveAvatarTokenEndpoint = String(window.ALAMEEN_LIVEAVATAR_TOKEN_ENDPOINT || '').trim();
+  var liveAvatarId = String(window.ALAMEEN_LIVEAVATAR_AVATAR_ID || 'alameen-taj-alsir').trim();
   var siteUrl = window.ALAMEEN_SITE_URL || (isArabic ? '../../ar/' : '../../');
   var alternateUrl = window.ALAMEEN_ALTERNATE_URL || (isArabic ? '../../Welcome/' : '../../ar/Welcome/');
 
@@ -59,6 +60,7 @@
                 <button class="ah-mic" type="button" aria-label="" aria-pressed="false">♩</button>
               </form>
               <p class="ah-session-hint"></p>
+              <button class="ah-end-session" type="button"></button>
             </section>
           </div>
         </section>
@@ -69,9 +71,7 @@
             <span class="ah-stage-status"><i aria-hidden="true"></i><b class="ah-stage-status-text"></b></span>
           </div>
           <div class="ah-video-stage">
-            <video class="ah-human ah-human-video" muted playsinline preload="auto" poster="${idleAvatar}" hidden aria-label="${copy.name}">
-              <source src="${talkingVideo}" type="video/mp4">
-            </video>
+            <video class="ah-human ah-human-video" playsinline preload="none" poster="${idleAvatar}" hidden aria-label="${copy.name}"></video>
             <img class="ah-human ah-human-fallback" src="${idleAvatar}" alt="${copy.name}">
             <span class="ah-video-sheen" aria-hidden="true"></span>
           </div>
@@ -113,6 +113,7 @@
   var form = root.querySelector('.ah-input-row');
   var sendButton = root.querySelector('.ah-send');
   var micButton = root.querySelector('.ah-mic');
+  var endButton = root.querySelector('.ah-end-session');
   var speakerButton = root.querySelector('.ah-tool-speaker');
   var captionButton = root.querySelector('.ah-tool-cc');
   var back = root.querySelector('.ah-back');
@@ -120,6 +121,9 @@
   var sessionHint = root.querySelector('.ah-session-hint');
   var humanVideo = root.querySelector('.ah-human-video');
   var humanFallback = root.querySelector('.ah-human-fallback');
+  var liveAvatar = null;
+  var liveAvatarAfter = null;
+  var liveAvatarSetupMessage = '';
   var recognition = null;
   var lastMessage = core.getWelcome(lang);
   var isRecognitionRunning = false;
@@ -147,6 +151,7 @@
   back.href = siteUrl;
   powered.textContent = copy.powered;
   sessionHint.textContent = copy.name;
+  endButton.textContent = copy.end;
   stageCaptionNote.textContent = isArabic ? 'حركة طبيعية • صوت تفاعلي' : 'Natural motion • interactive voice';
   stageFooterCopy.textContent = isArabic ? 'تحدث مع الأمين مباشرة' : 'Talk to Alameen directly';
 
@@ -170,29 +175,86 @@
   }
 
   function startTalkingAnimation() {
-    if (!humanVideo || root.classList.contains('ah-video-fallback')) return;
+    if (!humanVideo || !humanVideo.srcObject) return;
     if (humanFallback) humanFallback.hidden = true;
+    root.classList.remove('ah-video-fallback');
     humanVideo.hidden = false;
-    humanVideo.loop = true;
-    try { humanVideo.currentTime = 0; } catch (error) {}
+    humanVideo.muted = false;
     var playRequest = humanVideo.play();
-    if (playRequest && typeof playRequest.catch === 'function') playRequest.catch(function () {});
+    if (playRequest && typeof playRequest.catch === 'function') playRequest.catch(function () { showVideoFallback(); });
   }
 
   function stopTalkingAnimation() {
     if (!humanVideo) return;
     humanVideo.pause();
-    try { humanVideo.currentTime = 0; } catch (error) {}
     humanVideo.hidden = true;
     if (humanFallback) humanFallback.hidden = false;
   }
 
   function showVideoFallback() {
     if (!humanVideo) return;
+    humanVideo.pause();
     humanVideo.hidden = true;
     if (humanFallback) humanFallback.hidden = false;
     root.classList.add('ah-video-fallback');
   }
+
+  function releaseLiveAvatar() {
+    var active = liveAvatar;
+    liveAvatar = null;
+    liveAvatarAfter = null;
+    if (active && typeof active.disconnect === 'function') {
+      Promise.resolve(active.disconnect()).catch(function () {});
+    }
+  }
+
+  function setupLiveAvatar() {
+    if (!liveAvatarTokenEndpoint || !window.AlameenLiveAvatar || !window.AlameenLiveAvatar.createAlameenLiveAvatar) {
+      liveAvatarSetupMessage = copy.liveUnavailable;
+      return null;
+    }
+    try {
+      return window.AlameenLiveAvatar.createAlameenLiveAvatar({
+        video: humanVideo,
+        tokenEndpoint: liveAvatarTokenEndpoint,
+        avatarId: liveAvatarId,
+        supabasePublishableKey: window.ALAMEEN_SUPABASE_PUBLISHABLE_KEY || window.ALAMEEN_SUPABASE_ANON_KEY || '',
+        onReady: function () {
+          setMode('session');
+        },
+        onListening: function () {
+          setStatus(copy.listening, 'listening');
+        },
+        onThinking: function () {
+          setStatus(copy.waiting, 'waiting');
+        },
+        onSpeaking: function () {
+          setStatus(lastMessage, 'speaking');
+          startTalkingAnimation();
+        },
+        onIdle: function () {
+          if (!liveAvatar) return;
+          stopTalkingAnimation();
+          setMode('session');
+          if (liveAvatarAfter) {
+            var after = liveAvatarAfter;
+            liveAvatarAfter = null;
+            after();
+          }
+        },
+        onError: function () {
+          stopTalkingAnimation();
+          setStatus(isArabic ? 'تعذر تشغيل المساعد المباشر، يمكنك استخدام الكتابة.' : 'Live assistant is unavailable; you can use text instead.', 'session');
+          releaseLiveAvatar();
+        },
+      });
+    } catch (error) {
+      liveAvatarSetupMessage = copy.liveUnavailable;
+      return null;
+    }
+  }
+
+  liveAvatar = setupLiveAvatar();
 
   if (humanVideo) {
     humanVideo.addEventListener('error', showVideoFallback);
@@ -207,6 +269,16 @@
 
   function speakText(text, after) {
     lastMessage = text;
+    if (liveAvatar) {
+      liveAvatarAfter = after || null;
+      setStatus(text, 'speaking');
+      Promise.resolve(liveAvatar.speak(text)).catch(function () {
+        liveAvatarAfter = null;
+        releaseLiveAvatar();
+        setStatus(isArabic ? 'تعذر تشغيل الصوت المباشر.' : 'Live voice is unavailable.', 'session');
+      });
+      return;
+    }
     setMode('speaking');
     startTalkingAnimation();
     if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) {
@@ -239,8 +311,7 @@
   function scheduleOpeningWelcome() {
     window.setTimeout(function () {
       if (document.visibilityState === 'hidden') return;
-      openingWelcomePlayed = true;
-      speakText(core.getWelcome(lang));
+      lastMessage = core.getWelcome(lang);
     }, 650);
   }
 
@@ -263,6 +334,10 @@
   }
 
   function stopListening() {
+    if (liveAvatar) {
+      liveAvatar.stopListening();
+      return;
+    }
     if (recognition && isRecognitionRunning) recognition.stop();
     isRecognitionRunning = false;
     micButton.classList.remove('is-active');
@@ -270,6 +345,12 @@
   }
 
   function startListening() {
+    if (liveAvatar) {
+      liveAvatar.startListening().catch(function () {
+        setStatus(copy.microphone, 'session');
+      });
+      return;
+    }
     var Recognition = recognitionConstructor();
     if (!Recognition) {
       setStatus(copy.microphone, 'session');
@@ -329,9 +410,30 @@
   async function startSession() {
     startButton.disabled = true;
     setStatus(copy.waiting, 'waiting');
+    var activeLiveAvatar = liveAvatar;
+    if (activeLiveAvatar) {
+      try {
+        await activeLiveAvatar.connect();
+        if (liveAvatar !== activeLiveAvatar) return;
+        setMode('session');
+        if (!openingWelcomePlayed) {
+          openingWelcomePlayed = true;
+          speakText(core.getWelcome(lang), startListening);
+        } else {
+          startListening();
+        }
+      } catch (error) {
+        if (error && error.code === 'LIVEAVATAR_CANCELLED') return;
+        releaseLiveAvatar();
+        startButton.disabled = false;
+        setStatus(copy.microphone, 'session');
+      }
+      return;
+    }
     var microphoneAllowed = await requestMicrophone();
     setMode('session');
-    statusText.textContent = microphoneAllowed ? copy.sessionPrompt : copy.microphone;
+    statusText.textContent = liveAvatarSetupMessage || (microphoneAllowed ? copy.sessionPrompt : copy.microphone);
+    sessionHint.textContent = liveAvatarSetupMessage || copy.name;
     if (openingWelcomePlayed) {
       if (microphoneAllowed) startListening();
       return;
@@ -344,6 +446,17 @@
 
   startButton.addEventListener('click', startSession);
   micButton.addEventListener('click', startListening);
+  endButton.addEventListener('click', function () {
+    endButton.disabled = true;
+    stopListening();
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+    releaseLiveAvatar();
+    stopTalkingAnimation();
+    openingWelcomePlayed = false;
+    startButton.disabled = false;
+    endButton.disabled = false;
+    setMode('welcome');
+  });
   speakerButton.addEventListener('click', function () { speakText(lastMessage); });
   captionButton.addEventListener('click', function () {
     var off = root.classList.toggle('is-caption-off');
@@ -357,6 +470,7 @@
 
   window.addEventListener('pagehide', function () {
     stopListening();
+    if (liveAvatar) liveAvatar.disconnect();
     stopTalkingAnimation();
     if (window.speechSynthesis) window.speechSynthesis.cancel();
   });

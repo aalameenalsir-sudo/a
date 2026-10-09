@@ -1,0 +1,22 @@
+A SOLUTION — LIVEAVATAR UPLOAD MANIFEST
+
+Upload/replace these files in the GitHub repository, preserving paths:
+
+alameen-assistant-core.js
+alameen-liveavatar-core.js
+alameen-liveavatar.js
+alameen-welcome.js
+alameen-welcome.css
+alameen-taj-alsir-idle.jpg
+alameen-taj-alsir-standing.png
+a-solution-logo-tight.png
+ar/DigitalHumans/index.html
+ar/Welcome/index.html
+404.html
+supabase/config.toml
+supabase/functions/alameen-liveavatar-token/index.ts
+supabase/functions/alameen-liveavatar-token/token-core.mjs
+supabase/functions/alameen-liveavatar-token/README.md
+A_SOLUTION_LIVEAVATAR_SETUP.md
+
+Do not upload any HeyGen API key to GitHub. Store it only as a Supabase secret.

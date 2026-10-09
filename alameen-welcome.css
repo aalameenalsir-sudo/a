@@ -397,6 +397,20 @@ button { cursor: pointer; }
   font-size: 10px;
 }
 
+.ah-end-session {
+  margin-top: 12px;
+  padding: 0;
+  border: 0;
+  color: rgba(16, 19, 24, .48);
+  background: transparent;
+  font-size: 10px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.ah-end-session:hover,
+.ah-end-session:focus-visible { color: var(--ah-coral-deep); outline: none; }
+
 .ah-human-stage {
   width: 100%;
   max-width: 790px;

@@ -1,0 +1,4 @@
+project_id = "bgxtcpcbkjftkgswpizr"
+
+[functions.alameen-liveavatar-token]
+verify_jwt = false
