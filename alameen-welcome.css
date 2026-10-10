@@ -66,9 +66,11 @@ button { cursor:pointer; }
 .ah-video-stage { position:relative; width:100%; aspect-ratio:4/5; max-height:min(68vh,680px); overflow:hidden; border:1px solid rgba(255,255,255,.22); border-radius:32px; background:radial-gradient(circle at 50% 18%,rgba(99,85,201,.65),transparent 34%),linear-gradient(145deg,#202331,#10131b); box-shadow:0 28px 70px rgba(16,19,24,.22),0 4px 14px rgba(16,19,24,.1); }
 .ah-video-stage:before { position:absolute; inset:0; z-index:4; content:""; pointer-events:none; border:1px solid rgba(255,255,255,.28); border-radius:inherit; }
 .ah-human { position:absolute; inset:0; display:block; width:100%; height:100%; }
-.ah-human-video { z-index:1; object-fit:contain; object-position:center; background:transparent; filter:saturate(1.04) contrast(1.02); pointer-events:none; }
+.ah-fallback-video { z-index:1; object-fit:cover; object-position:center top; background:#eef0f4; filter:saturate(1.03) contrast(1.02); pointer-events:none; }
+.ah-fallback-video[hidden] { display:none!important; }
+.ah-human-video { z-index:2; object-fit:contain; object-position:center; background:transparent; filter:saturate(1.04) contrast(1.02); pointer-events:none; }
 .ah-human-video[hidden] { display:none!important; }
-.ah-video-placeholder { position:absolute; inset:0; z-index:1; display:grid; place-content:center; justify-items:center; gap:16px; padding:32px; color:rgba(255,255,255,.9); text-align:center; }
+.ah-video-placeholder { position:absolute; inset:0; z-index:3; display:none; place-content:center; justify-items:center; gap:16px; padding:32px; color:rgba(255,255,255,.9); text-align:center; }
 .ah-placeholder-mark { display:inline-flex; align-items:flex-end; justify-content:center; gap:5px; width:58px; height:58px; padding:0 12px 12px; border:1px solid rgba(255,255,255,.25); border-radius:19px; background:rgba(255,255,255,.09); box-shadow:0 16px 34px rgba(0,0,0,.18); }
 .ah-placeholder-mark i { display:block; width:6px; height:15px; border-radius:99px; background:var(--coral); animation:ah-equalizer 1.1s ease-in-out infinite; }
 .ah-placeholder-mark i:nth-child(2) { height:26px; animation-delay:.14s; background:#a99ef2; }
@@ -76,7 +78,9 @@ button { cursor:pointer; }
 .ah-placeholder-title { font-size:clamp(15px,1.7vw,21px); font-weight:700; }
 .ah-placeholder-hint { max-width:290px; color:rgba(255,255,255,.62); font-size:11px; line-height:1.8; }
 .ah-app.has-live-video .ah-video-placeholder { display:none; }
-.ah-app.ah-video-unavailable .ah-video-placeholder { display:grid; }
+.ah-app.has-live-video .ah-fallback-video { opacity:0; }
+.ah-app.ah-no-visual .ah-fallback-video { display:none; }
+.ah-app.ah-no-visual .ah-video-placeholder { display:grid; }
 .ah-video-sheen { position:absolute; inset:0; z-index:3; pointer-events:none; background:linear-gradient(115deg,rgba(255,255,255,.15),transparent 23%,transparent 76%,rgba(16,19,24,.06)); }
 .ah-footer { position:relative; z-index:3; display:flex; align-items:center; justify-content:space-between; padding:0 0 22px; direction:ltr; }
 .ah-back,.ah-powered { color:rgba(16,19,24,.5); font-size:10px; text-decoration:none; }
