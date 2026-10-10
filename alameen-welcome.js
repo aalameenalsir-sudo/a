@@ -34,7 +34,7 @@
             '<section class="ah-session-panel" aria-label="Conversation"><div class="ah-status"><span class="ah-status-spinner" aria-hidden="true"></span><span class="ah-status-text"></span></div><form class="ah-input-row"><button class="ah-send" type="submit" aria-label=""></button><input type="text" autocomplete="off" aria-label=""><button class="ah-mic" type="button" aria-label="" aria-pressed="false">♩</button></form><p class="ah-session-hint"></p><button class="ah-end-session" type="button"></button></section>',
           '</div>',
         '</section>',
-        '<section class="ah-human-stage" aria-live="polite"><div class="ah-stage-header"><span class="ah-stage-label">A SOLUTION / DIGITAL HUMAN</span><span class="ah-stage-status"><i aria-hidden="true"></i><b class="ah-stage-status-text"></b></span></div><div class="ah-video-stage"><video class="ah-human ah-human-video" playsinline preload="none" hidden aria-label="', copy.name, '"></video><div class="ah-video-placeholder" role="status"><span class="ah-placeholder-mark" aria-hidden="true"><i></i><i></i><i></i></span><strong class="ah-placeholder-title"></strong><small class="ah-placeholder-hint"></small></div><span class="ah-video-sheen" aria-hidden="true"></span></div></section>',
+        '<section class="ah-human-stage" aria-live="polite"><div class="ah-stage-header"><span class="ah-stage-label">A SOLUTION / DIGITAL HUMAN</span><span class="ah-stage-status"><i aria-hidden="true"></i><b class="ah-stage-status-text"></b></span></div><div class="ah-video-stage"><video class="ah-human ah-fallback-video" autoplay muted loop playsinline preload="auto" aria-hidden="true"><source src="', base, 'alameen-taj-alsir-talking.mp4" type="video/mp4"></video><video class="ah-human ah-human-video" playsinline preload="none" hidden aria-label="', copy.name, '"></video><div class="ah-video-placeholder" role="status"><span class="ah-placeholder-mark" aria-hidden="true"><i></i><i></i><i></i></span><strong class="ah-placeholder-title"></strong><small class="ah-placeholder-hint"></small></div><span class="ah-video-sheen" aria-hidden="true"></span></div></section>',
       '</div>',
       '<footer class="ah-footer"><a class="ah-back" href="', siteUrl, '"></a><span class="ah-powered"></span></footer>',
     '</main>'
@@ -62,6 +62,7 @@
   var back = root.querySelector('.ah-back');
   var powered = root.querySelector('.ah-powered');
   var hint = root.querySelector('.ah-session-hint');
+  var fallbackVideo = root.querySelector('.ah-fallback-video');
   var video = root.querySelector('.ah-human-video');
   var placeholderTitle = root.querySelector('.ah-placeholder-title');
   var placeholderHint = root.querySelector('.ah-placeholder-hint');
@@ -110,7 +111,7 @@
 
   function showLiveVideo() {
     if (!video || !video.srcObject) return;
-    root.classList.remove('ah-video-unavailable');
+    root.classList.remove('ah-video-unavailable', 'ah-no-visual');
     root.classList.add('has-live-video');
     video.hidden = false;
     video.muted = false;
@@ -132,7 +133,13 @@
     video.pause();
     video.hidden = true;
     video.srcObject = null;
-    root.classList.remove('has-live-video', 'ah-video-unavailable');
+    root.classList.remove('has-live-video', 'ah-video-unavailable', 'ah-no-visual');
+    if (fallbackVideo) {
+      fallbackVideo.hidden = false;
+      fallbackVideo.muted = true;
+      var fallbackPlay = fallbackVideo.play();
+      if (fallbackPlay && typeof fallbackPlay.catch === 'function') fallbackPlay.catch(function () { root.classList.add('ah-no-visual'); });
+    }
     placeholderTitle.textContent = isArabic ? 'الشخصية الحية جاهزة' : 'Live avatar is ready';
     placeholderHint.textContent = isArabic ? 'اضغط «ابدأ التحدث» لبدء البث المباشر' : 'Press “Start speaking” to start the live stream';
   }
@@ -191,6 +198,12 @@
         onError: function () { showFallback(); setStatus(isArabic ? 'تعذر تشغيل المساعد المباشر، يمكنك استخدام الكتابة.' : 'Live assistant is unavailable; you can use text instead.', 'session'); }
       });
     } catch (error) { live = null; }
+  }
+
+  if (fallbackVideo) {
+    fallbackVideo.addEventListener('error', function () { root.classList.add('ah-no-visual'); });
+    var initialFallbackPlay = fallbackVideo.play();
+    if (initialFallbackPlay && typeof initialFallbackPlay.catch === 'function') initialFallbackPlay.catch(function () { root.classList.add('ah-no-visual'); });
   }
 
   function handleMessage(text) {
