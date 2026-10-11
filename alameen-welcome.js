@@ -170,7 +170,7 @@
       Promise.resolve(live.speak(text)).catch(function () { setStatus(isArabic ? 'تعذر تشغيل الصوت المباشر.' : 'Live voice is unavailable.', 'session'); });
       return;
     }
-    if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) { if (after) window.setTimeout(after, 350); return; }
+    if (fallbackVideo) fallbackVideo.play(); if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) { window.setTimeout(function () { if (fallbackVideo) fallbackVideo.pause(); setMode('session'); if (after) after(); }, 350); return; }
     setStatus(text, 'speaking');
     window.speechSynthesis.cancel();
     var speech = core.getSpeechConfig(lang);
@@ -178,7 +178,7 @@
     utterance.lang = speech.lang;
     utterance.rate = speech.rate;
     utterance.pitch = speech.pitch;
-    utterance.onend = function () { setMode('session'); if (after) after(); };
+    utterance.onend = function () { if (fallbackVideo) fallbackVideo.pause(); setMode('session'); if (after) after(); };
     utterance.onerror = utterance.onend;
     window.speechSynthesis.speak(utterance);
   }
@@ -193,8 +193,8 @@
         onReady: function () { showLiveVideo(); setMode('session'); },
         onListening: function () { mic.classList.add('is-active'); mic.setAttribute('aria-pressed', 'true'); setStatus(copy.listening, 'listening'); },
         onThinking: function () { setStatus(copy.waiting, 'waiting'); },
-        onSpeaking: function () { showLiveVideo(); setStatus(lastMessage, 'speaking'); },
-        onIdle: function () { if (!live) return; showLiveVideo(); setMode('session'); if (afterIdle) { var done = afterIdle; afterIdle = null; done(); } },
+        onSpeaking: function () { if (fallbackVideo) fallbackVideo.play(); showLiveVideo(); setStatus(lastMessage, 'speaking'); },
+        onIdle: function () { if (!live) return; if (fallbackVideo) fallbackVideo.pause(); if (video && video.srcObject) video.pause(); setMode('session'); if (afterIdle) { var done = afterIdle; afterIdle = null; done(); } },
         onError: function () { showFallback(); setStatus(isArabic ? 'تعذر تشغيل المساعد المباشر، يمكنك استخدام الكتابة.' : 'Live assistant is unavailable; you can use text instead.', 'session'); }
       });
     } catch (error) { live = null; }
