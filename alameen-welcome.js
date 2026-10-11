@@ -34,7 +34,7 @@
             '<section class="ah-session-panel" aria-label="Conversation"><div class="ah-status"><span class="ah-status-spinner" aria-hidden="true"></span><span class="ah-status-text"></span></div><form class="ah-input-row"><button class="ah-send" type="submit" aria-label=""></button><input type="text" autocomplete="off" aria-label=""><button class="ah-mic" type="button" aria-label="" aria-pressed="false">♩</button></form><p class="ah-session-hint"></p><button class="ah-end-session" type="button"></button></section>',
           '</div>',
         '</section>',
-        '<section class="ah-human-stage" aria-live="polite"><div class="ah-stage-header"><span class="ah-stage-label">A SOLUTION / DIGITAL HUMAN</span><span class="ah-stage-status"><i aria-hidden="true"></i><b class="ah-stage-status-text"></b></span></div><div class="ah-video-stage"><video class="ah-human ah-fallback-video" autoplay muted loop playsinline preload="auto" aria-hidden="true"><source src="', base, 'alameen-taj-alsir-talking.mp4" type="video/mp4"></video><video class="ah-human ah-human-video" playsinline preload="none" hidden aria-label="', copy.name, '"></video><div class="ah-video-placeholder" role="status"><span class="ah-placeholder-mark" aria-hidden="true"><i></i><i></i><i></i></span><strong class="ah-placeholder-title"></strong><small class="ah-placeholder-hint"></small></div><span class="ah-video-sheen" aria-hidden="true"></span></div></section>',
+        '<section class="ah-human-stage" aria-live="polite"><div class="ah-stage-header"><span class="ah-stage-label">A SOLUTION / DIGITAL HUMAN</span><span class="ah-stage-status"><i aria-hidden="true"></i><b class="ah-stage-status-text"></b></span></div><div class="ah-video-stage"><img class="ah-human ah-fallback-video ah-idle-image" style="object-fit:contain;object-position:center bottom;background:transparent" src="', base, 'alameen-taj-alsir-standing.png" alt="', copy.name, '" aria-hidden="true"><video class="ah-human ah-fallback-video" muted playsinline preload="metadata" hidden aria-hidden="true"><source src="', base, 'alameen-taj-alsir-talking.mp4" type="video/mp4"></video><video class="ah-human ah-human-video" playsinline preload="none" hidden aria-label="', copy.name, '"></video><div class="ah-video-placeholder" role="status"><span class="ah-placeholder-mark" aria-hidden="true"><i></i><i></i><i></i></span><strong class="ah-placeholder-title"></strong><small class="ah-placeholder-hint"></small></div><span class="ah-video-sheen" aria-hidden="true"></span></div></section>',
       '</div>',
       '<footer class="ah-footer"><a class="ah-back" href="', siteUrl, '"></a><span class="ah-powered"></span></footer>',
     '</main>'
@@ -62,7 +62,8 @@
   var back = root.querySelector('.ah-back');
   var powered = root.querySelector('.ah-powered');
   var hint = root.querySelector('.ah-session-hint');
-  var fallbackVideo = root.querySelector('.ah-fallback-video');
+  var idleImage = root.querySelector('.ah-idle-image');
+  var fallbackVideo = root.querySelector('video.ah-fallback-video');
   var video = root.querySelector('.ah-human-video');
   var placeholderTitle = root.querySelector('.ah-placeholder-title');
   var placeholderHint = root.querySelector('.ah-placeholder-hint');
@@ -113,6 +114,8 @@
     if (!video || !video.srcObject) return;
     root.classList.remove('ah-video-unavailable', 'ah-no-visual');
     root.classList.add('has-live-video');
+    if (idleImage) idleImage.hidden = true;
+    if (fallbackVideo) { fallbackVideo.pause(); fallbackVideo.hidden = true; }
     video.hidden = false;
     video.muted = false;
     var playRequest = video.play();
@@ -120,6 +123,7 @@
   }
 
   function showFallback() {
+    showIdleVisual();
     if (!video) return;
     video.pause();
     video.hidden = true;
@@ -129,17 +133,36 @@
     placeholderHint.textContent = isArabic ? 'اضغط «إنهاء الجلسة» ثم حاول مرة أخرى' : 'End the session and try again';
   }
 
+  function showIdleVisual() {
+    if (fallbackVideo) {
+      fallbackVideo.pause();
+      fallbackVideo.hidden = true;
+      try { fallbackVideo.currentTime = 0; } catch (error) {}
+    }
+    if (idleImage) idleImage.hidden = false;
+  }
+
+  function playFallbackVideo() {
+    if (!fallbackVideo) return;
+    if (idleImage) idleImage.hidden = true;
+    root.classList.remove('has-live-video', 'ah-video-unavailable');
+    fallbackVideo.hidden = false;
+    fallbackVideo.muted = true;
+    try { fallbackVideo.currentTime = 0; } catch (error) {}
+    var playRequest = fallbackVideo.play();
+    if (playRequest && typeof playRequest.catch === 'function') playRequest.catch(function () { root.classList.add('ah-no-visual'); });
+  }
+
+  function pauseFallbackVideo() {
+    showIdleVisual();
+  }
+
   function resetStage() {
     video.pause();
     video.hidden = true;
     video.srcObject = null;
     root.classList.remove('has-live-video', 'ah-video-unavailable', 'ah-no-visual');
-    if (fallbackVideo) {
-      fallbackVideo.hidden = false;
-      fallbackVideo.muted = true;
-      var fallbackPlay = fallbackVideo.play();
-      if (fallbackPlay && typeof fallbackPlay.catch === 'function') fallbackPlay.catch(function () { root.classList.add('ah-no-visual'); });
-    }
+    showIdleVisual();
     placeholderTitle.textContent = isArabic ? 'الشخصية الحية جاهزة' : 'Live avatar is ready';
     placeholderHint.textContent = isArabic ? 'اضغط «ابدأ التحدث» لبدء البث المباشر' : 'Press “Start speaking” to start the live stream';
   }
@@ -170,7 +193,7 @@
       Promise.resolve(live.speak(text)).catch(function () { setStatus(isArabic ? 'تعذر تشغيل الصوت المباشر.' : 'Live voice is unavailable.', 'session'); });
       return;
     }
-    if (fallbackVideo) fallbackVideo.play(); if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) { window.setTimeout(function () { if (fallbackVideo) fallbackVideo.pause(); setMode('session'); if (after) after(); }, 350); return; }
+    playFallbackVideo(); if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) { window.setTimeout(function () { pauseFallbackVideo(); setMode('session'); if (after) after(); }, 350); return; }
     setStatus(text, 'speaking');
     window.speechSynthesis.cancel();
     var speech = core.getSpeechConfig(lang);
@@ -178,7 +201,7 @@
     utterance.lang = speech.lang;
     utterance.rate = speech.rate;
     utterance.pitch = speech.pitch;
-    utterance.onend = function () { if (fallbackVideo) fallbackVideo.pause(); setMode('session'); if (after) after(); };
+    utterance.onend = function () { pauseFallbackVideo(); setMode('session'); if (after) after(); };
     utterance.onerror = utterance.onend;
     window.speechSynthesis.speak(utterance);
   }
@@ -193,17 +216,17 @@
         onReady: function () { showLiveVideo(); setMode('session'); },
         onListening: function () { mic.classList.add('is-active'); mic.setAttribute('aria-pressed', 'true'); setStatus(copy.listening, 'listening'); },
         onThinking: function () { setStatus(copy.waiting, 'waiting'); },
-        onSpeaking: function () { if (fallbackVideo) fallbackVideo.play(); showLiveVideo(); setStatus(lastMessage, 'speaking'); },
-        onIdle: function () { if (!live) return; if (fallbackVideo) fallbackVideo.pause(); if (video && video.srcObject) video.pause(); setMode('session'); if (afterIdle) { var done = afterIdle; afterIdle = null; done(); } },
+        onSpeaking: function () { if (video && video.srcObject) showLiveVideo(); else playFallbackVideo(); setStatus(lastMessage, 'speaking'); },
+        onIdle: function () { if (!live) return; if (video && video.srcObject) video.pause(); else pauseFallbackVideo(); setMode('session'); if (afterIdle) { var done = afterIdle; afterIdle = null; done(); } },
         onError: function () { showFallback(); setStatus(isArabic ? 'تعذر تشغيل المساعد المباشر، يمكنك استخدام الكتابة.' : 'Live assistant is unavailable; you can use text instead.', 'session'); }
       });
     } catch (error) { live = null; }
   }
 
   if (fallbackVideo) {
-    fallbackVideo.addEventListener('error', function () { root.classList.add('ah-no-visual'); });
-    var initialFallbackPlay = fallbackVideo.play();
-    if (initialFallbackPlay && typeof initialFallbackPlay.catch === 'function') initialFallbackPlay.catch(function () { root.classList.add('ah-no-visual'); });
+    fallbackVideo.addEventListener('ended', showIdleVisual);
+    fallbackVideo.addEventListener('error', function () { showIdleVisual(); root.classList.add('ah-no-visual'); });
+    showIdleVisual();
   }
 
   function handleMessage(text) {
