@@ -34,7 +34,7 @@
             '<section class="ah-session-panel" aria-label="Conversation"><div class="ah-status"><span class="ah-status-spinner" aria-hidden="true"></span><span class="ah-status-text"></span></div><form class="ah-input-row"><button class="ah-send" type="submit" aria-label=""></button><input type="text" autocomplete="off" aria-label=""><button class="ah-mic" type="button" aria-label="" aria-pressed="false">♩</button></form><p class="ah-session-hint"></p><button class="ah-end-session" type="button"></button></section>',
           '</div>',
         '</section>',
-        '<section class="ah-human-stage" aria-live="polite"><div class="ah-stage-header"><span class="ah-stage-label">A SOLUTION / DIGITAL HUMAN</span><span class="ah-stage-status"><i aria-hidden="true"></i><b class="ah-stage-status-text"></b></span></div><div class="ah-video-stage"><img class="ah-human ah-fallback-video ah-idle-image" style="object-fit:contain;object-position:center bottom;background:transparent" src="', base, 'alameen-taj-alsir-standing.png" alt="', copy.name, '" aria-hidden="true"><video class="ah-human ah-fallback-video" muted playsinline preload="metadata" hidden aria-hidden="true"><source src="', base, 'alameen-taj-alsir-talking.mp4" type="video/mp4"></video><video class="ah-human ah-human-video" playsinline preload="none" hidden aria-label="', copy.name, '"></video><div class="ah-video-placeholder" role="status"><span class="ah-placeholder-mark" aria-hidden="true"><i></i><i></i><i></i></span><strong class="ah-placeholder-title"></strong><small class="ah-placeholder-hint"></small></div><span class="ah-video-sheen" aria-hidden="true"></span></div></section>',
+        '<section class="ah-human-stage" aria-live="polite"><div class="ah-stage-header"><span class="ah-stage-label">A SOLUTION / DIGITAL HUMAN</span><span class="ah-stage-status"><i aria-hidden="true"></i><b class="ah-stage-status-text"></b></span></div><div class="ah-video-stage"><img class="ah-human ah-fallback-video ah-idle-image" hidden style="object-fit:contain;object-position:center bottom;background:transparent" src="', base, 'alameen-taj-alsir-standing.png" alt="', copy.name, '" aria-hidden="true"><video class="ah-human ah-fallback-video" muted playsinline preload="auto" hidden aria-hidden="true"><source src="', base, 'alameen-taj-alsir-talking.mp4" type="video/mp4"></video><video class="ah-human ah-human-video" playsinline preload="none" hidden aria-label="', copy.name, '"></video><div class="ah-video-placeholder" role="status"><span class="ah-placeholder-mark" aria-hidden="true"><i></i><i></i><i></i></span><strong class="ah-placeholder-title"></strong><small class="ah-placeholder-hint"></small></div><span class="ah-video-sheen" aria-hidden="true"></span></div></section>',
       '</div>',
       '<footer class="ah-footer"><a class="ah-back" href="', siteUrl, '"></a><span class="ah-powered"></span></footer>',
     '</main>'
@@ -134,12 +134,13 @@
   }
 
   function showIdleVisual() {
+    if (idleImage) idleImage.hidden = true;
     if (fallbackVideo) {
       fallbackVideo.pause();
-      fallbackVideo.hidden = true;
+      fallbackVideo.hidden = false;
+      fallbackVideo.muted = true;
       try { fallbackVideo.currentTime = 0; } catch (error) {}
     }
-    if (idleImage) idleImage.hidden = false;
   }
 
   function playFallbackVideo() {
